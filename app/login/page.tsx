@@ -44,8 +44,8 @@ export default function LoginPage() {
     try {
       await signIn(email, password)
       toast({
-        title: "Login successful",
-        description: "Welcome back to PhotoEnhance AI!",
+        title: "Login realizado com sucesso",
+        description: "Bem-vindo de volta ao PhotoEnhance AI!",
       })
 
       // Redirecionar para a página solicitada ou para o dashboard
@@ -59,15 +59,15 @@ export default function LoginPage() {
 
       // Mensagens de erro mais amigáveis
       if (err.code === "auth/invalid-email") {
-        setError("Invalid email address. Please check and try again.")
+        setError("Endereço de e-mail inválido. Por favor, verifique e tente novamente.")
       } else if (err.code === "auth/user-not-found") {
-        setError("No account found with this email. Please check or create a new account.")
+        setError("Nenhuma conta encontrada com este e-mail. Por favor, verifique ou crie uma nova conta.")
       } else if (err.code === "auth/wrong-password") {
-        setError("Incorrect password. Please try again or reset your password.")
+        setError("Senha incorreta. Por favor, tente novamente ou redefina sua senha.")
       } else if (err.code === "auth/invalid-api-key") {
-        setError("Authentication configuration error. Please contact support.")
+        setError("Erro de configuração de autenticação. Por favor, entre em contato com o suporte.")
       } else {
-        setError(err.message || "Failed to sign in")
+        setError(err.message || "Falha ao fazer login")
       }
     } finally {
       setIsLoading(false)
@@ -81,8 +81,8 @@ export default function LoginPage() {
     try {
       await googleSignIn()
       toast({
-        title: "Login successful",
-        description: "Welcome back to PhotoEnhance AI!",
+        title: "Login realizado com sucesso",
+        description: "Bem-vindo de volta ao PhotoEnhance AI!",
       })
 
       // Redirecionar para a página solicitada ou para o dashboard
@@ -96,17 +96,23 @@ export default function LoginPage() {
 
       // Mensagens de erro mais amigáveis
       if (err.message.includes("auth-domain-config-required") || err.message.includes("Authentication domain")) {
-        setError("Firebase authentication domain is not configured correctly. Please contact support.")
+        setError(
+          "O domínio de autenticação do Firebase não está configurado corretamente. Entre em contato com o suporte.",
+        )
       } else if (err.message.includes("invalid-api-key")) {
-        setError("Firebase API key is invalid. Please contact support.")
+        setError("A chave de API do Firebase é inválida. Entre em contato com o suporte.")
       } else if (err.message.includes("redirect_uri_mismatch")) {
-        setError("Authentication domain mismatch. Please ensure you're accessing the site from an authorized domain.")
+        setError(
+          "Incompatibilidade de domínio de autenticação. Certifique-se de estar acessando o site a partir de um domínio autorizado.",
+        )
       } else if (err.code === "auth/popup-closed-by-user") {
-        setError("Login popup was closed. Please try again.")
+        setError("O popup de login foi fechado. Por favor, tente novamente.")
       } else if (err.code === "auth/popup-blocked") {
-        setError("Login popup was blocked by your browser. Please allow popups for this site and try again.")
+        setError(
+          "O popup de login foi bloqueado pelo seu navegador. Por favor, permita popups para este site e tente novamente.",
+        )
       } else {
-        setError(err.message || "Failed to sign in with Google")
+        setError(err.message || "Falha ao fazer login com o Google")
       }
     } finally {
       setIsGoogleLoading(false)
@@ -117,7 +123,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Entrar</CardTitle>
           <CardDescription className="text-center">
             Entre com sua conta para continuar
             {redirectPath && " e finalizar sua compra"}
@@ -131,7 +137,7 @@ export default function LoginPage() {
             >
               <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
               <AlertDescription className="text-yellow-600 dark:text-yellow-400">
-                Firebase authentication is not initialized. Some features may not work properly.
+                A autenticação do Firebase não está inicializada. Alguns recursos podem não funcionar corretamente.
               </AlertDescription>
             </Alert>
           )}
@@ -145,11 +151,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="nome@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -157,9 +163,9 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <Link href="/reset-password" className="text-sm text-primary hover:underline">
-                  Forgot password?
+                  Esqueceu a senha?
                 </Link>
               </div>
               <Input
@@ -171,7 +177,7 @@ export default function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading || !firebaseInitialized}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
 
@@ -180,7 +186,7 @@ export default function LoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
             </div>
           </div>
 
@@ -194,7 +200,7 @@ export default function LoginPage() {
             {isGoogleLoading ? (
               <>
                 <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
-                Signing in...
+                Entrando...
               </>
             ) : (
               <>
@@ -220,12 +226,12 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Não tem uma conta?{" "}
             <Link
               href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : "/register"}
               className="text-primary hover:underline"
             >
-              Sign up
+              Cadastre-se
             </Link>
           </p>
         </CardFooter>

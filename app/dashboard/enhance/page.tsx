@@ -51,10 +51,10 @@ export default function EnhancePage() {
           const userSubscription = await getUserSubscription(user.uid)
           setSubscription(userSubscription)
         } catch (error) {
-          console.error("Error fetching subscription:", error)
+          console.error("Erro ao buscar informações da assinatura:", error)
           toast({
-            title: "Error",
-            description: "Failed to fetch subscription information",
+            title: "Erro",
+            description: "Falha ao buscar informações da assinatura",
             variant: "destructive",
           })
         } finally {
@@ -69,13 +69,13 @@ export default function EnhancePage() {
   const validateFile = (file: File): boolean => {
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
-      setError(`File size exceeds the maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB.`)
+      setError(`O tamanho do arquivo excede o limite máximo de ${MAX_FILE_SIZE / (1024 * 1024)}MB.`)
       return false
     }
 
     // Check file type
     if (!file.type.startsWith("image/")) {
-      setError("Only image files are allowed.")
+      setError("Apenas arquivos de imagem são permitidos.")
       return false
     }
 
@@ -106,7 +106,7 @@ export default function EnhancePage() {
 
       // Update file size information
       setCompressedFileSize(formatFileSize(compressed.size))
-      setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(selectedFile.size)})`)
+      setFileSize(`${formatFileSize(compressed.size)} (comprimido de ${formatFileSize(selectedFile.size)})`)
 
       // Create object URL for preview
       const objectUrl = URL.createObjectURL(compressed)
@@ -120,7 +120,7 @@ export default function EnhancePage() {
       }
       reader.readAsDataURL(compressed)
     } catch (error) {
-      console.error("Error processing image:", error)
+      console.error("Erro ao processar imagem:", error)
       // Fall back to original file if compression fails
       setFile(selectedFile)
       setPreviewUrl(URL.createObjectURL(selectedFile))
@@ -162,7 +162,7 @@ export default function EnhancePage() {
 
       // Update file size information
       setCompressedFileSize(formatFileSize(compressed.size))
-      setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(droppedFile.size)})`)
+      setFileSize(`${formatFileSize(compressed.size)} (comprimido de ${formatFileSize(droppedFile.size)})`)
 
       // Create object URL for preview
       const objectUrl = URL.createObjectURL(compressed)
@@ -176,7 +176,7 @@ export default function EnhancePage() {
       }
       reader.readAsDataURL(compressed)
     } catch (error) {
-      console.error("Error processing image:", error)
+      console.error("Erro ao processar imagem:", error)
       // Fall back to original file if compression fails
       setFile(droppedFile)
       setPreviewUrl(URL.createObjectURL(droppedFile))
@@ -198,7 +198,7 @@ export default function EnhancePage() {
   }, [])
 
   const callEnhanceAPI = async (imageUrl: string): Promise<string> => {
-    console.log("Calling enhance API...")
+    console.log("Chamando API de aprimoramento...")
 
     // Add timeout to prevent hanging requests
     const controller = new AbortController()
@@ -217,16 +217,16 @@ export default function EnhancePage() {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`)
+        throw new Error(`Erro na API: ${response.status} ${response.statusText}`)
       }
 
       const data = await response.json()
 
       // Check if we have an error but also a fallback URL
       if (data.error && data.fallback && data.enhancedImageUrl) {
-        console.warn("API returned an error but provided fallback:", data.error)
+        console.warn("API retornou um erro mas forneceu fallback:", data.error)
         toast({
-          title: "Enhancement limited",
+          title: "Aprimoramento limitado",
           description: data.error,
           variant: "warning",
         })
@@ -235,12 +235,12 @@ export default function EnhancePage() {
 
       // Check if we have the enhanced image URL
       if (!data.enhancedImageUrl) {
-        throw new Error(data.error || "No enhanced image URL returned")
+        throw new Error(data.error || "Nenhuma URL de imagem aprimorada retornada")
       }
 
       return data.enhancedImageUrl
     } catch (error) {
-      console.error("Error in callEnhanceAPI:", error)
+      console.error("Erro em callEnhanceAPI:", error)
       throw error
     }
   }
@@ -248,8 +248,8 @@ export default function EnhancePage() {
   const handleEnhance = async () => {
     if (!file && !imageBase64) {
       toast({
-        title: "No image selected",
-        description: "Please upload an image first",
+        title: "Nenhuma imagem selecionada",
+        description: "Por favor, envie uma imagem primeiro",
         variant: "destructive",
       })
       return
@@ -257,10 +257,10 @@ export default function EnhancePage() {
 
     // Check if user has credits
     if (!subscription || subscription.remainingCredits <= 0) {
-      setError("You have no credits left. Please purchase a subscription.")
+      setError("Você não tem créditos restantes. Por favor, adquira uma assinatura.")
       toast({
-        title: "No credits available",
-        description: "Please purchase a subscription to enhance photos",
+        title: "Sem créditos disponíveis",
+        description: "Por favor, adquira uma assinatura para aprimorar fotos",
         variant: "destructive",
       })
       return
@@ -271,18 +271,18 @@ export default function EnhancePage() {
 
     try {
       if (!user) {
-        throw new Error("User not authenticated")
+        throw new Error("Usuário não autenticado")
       }
 
       if (!file) {
-        throw new Error("No file available")
+        throw new Error("Nenhum arquivo disponível")
       }
 
       // Try to use base64 for API if available (faster)
       const imageToProcess = imageBase64 || previewUrl
 
       if (!imageToProcess) {
-        throw new Error("No image data available")
+        throw new Error("Nenhum dado de imagem disponível")
       }
 
       // Create a record in Firestore first
@@ -340,16 +340,16 @@ export default function EnhancePage() {
       setEnhancedUrl(storedEnhancedUrl)
 
       toast({
-        title: "Photo enhanced successfully",
-        description: "Your photo has been enhanced and is ready to download.",
+        title: "Foto aprimorada com sucesso",
+        description: "Sua foto foi aprimorada e está pronta para download.",
       })
     } catch (error: any) {
-      console.error("Error enhancing image:", error)
-      setError(error.message || "Failed to enhance the image. Please try again.")
+      console.error("Erro ao aprimorar imagem:", error)
+      setError(error.message || "Falha ao aprimorar a imagem. Por favor, tente novamente.")
 
       toast({
-        title: "Error enhancing image",
-        description: error.message || "An error occurred while processing your image",
+        title: "Erro ao aprimorar imagem",
+        description: error.message || "Ocorreu um erro ao processar sua imagem",
         variant: "destructive",
       })
     } finally {
@@ -382,8 +382,8 @@ export default function EnhancePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Enhance Photos</h1>
-        <p className="text-muted-foreground">Upload a photo and let our AI enhance it for you.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Aprimorar Fotos</h1>
+        <p className="text-muted-foreground">Envie uma foto e deixe nossa IA aprimorá-la para você.</p>
       </div>
 
       {error && (
@@ -396,7 +396,7 @@ export default function EnhancePage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Upload Photo</CardTitle>
+            <CardTitle>Enviar Foto</CardTitle>
             <CardDescription>
               Envie suas fotos para que nossa IA Avançada torne elas em fotografias profissionais para seu negócio.
             </CardDescription>
@@ -421,7 +421,7 @@ export default function EnhancePage() {
                 <>
                   <Upload className="h-10 w-10 text-muted-foreground mb-4" />
                   <p className="text-sm text-muted-foreground text-center">
-                    Drag and drop your photo here, or click to select a file
+                    Arraste e solte sua foto aqui, ou clique para selecionar um arquivo
                   </p>
                   <p className="text-xs text-muted-foreground mt-2">
                     Tamanho máximo: 15MB. Formatos: JPG, PNG
@@ -441,16 +441,16 @@ export default function EnhancePage() {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={handleReset} disabled={isProcessing || !file}>
-              Reset
+              Limpar
             </Button>
             <Button onClick={handleEnhance} disabled={isProcessing || !file}>
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  Processando...
                 </>
               ) : (
-                "Enhance Photo"
+                "Aprimorar Foto"
               )}
             </Button>
           </CardFooter>
@@ -458,22 +458,22 @@ export default function EnhancePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Enhanced Result</CardTitle>
-            <CardDescription>Your enhanced photo will appear here.</CardDescription>
+            <CardTitle>Resultado Aprimorado</CardTitle>
+            <CardDescription>Sua foto aprimorada aparecerá aqui.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center min-h-[300px]">
               {isProcessing ? (
                 <div className="flex flex-col items-center">
                   <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-                  <p className="text-sm text-muted-foreground">Enhancing your photo...</p>
+                  <p className="text-sm text-muted-foreground">Aprimorando sua foto...</p>
                 </div>
               ) : previewUrl && enhancedUrl ? (
                 <EnhanceImageComparison previewUrl={previewUrl} enhancedUrl={enhancedUrl} />
               ) : (
                 <div className="flex flex-col items-center">
                   <ImageIcon className="h-10 w-10 text-muted-foreground mb-4" />
-                  <p className="text-sm text-muted-foreground text-center">Enhanced photo will appear here</p>
+                  <p className="text-sm text-muted-foreground text-center">A foto aprimorada aparecerá aqui</p>
                 </div>
               )}
             </div>
@@ -481,8 +481,8 @@ export default function EnhancePage() {
           <CardFooter>
             {enhancedUrl && (
               <Button asChild className="w-full">
-                <a href={enhancedUrl} download="enhanced-photo.png">
-                  Download Enhanced Photo
+                <a href={enhancedUrl} download="foto-aprimorada.png">
+                  Baixar Foto Aprimorada
                 </a>
               </Button>
             )}
@@ -492,25 +492,27 @@ export default function EnhancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Credits Remaining</CardTitle>
+          <CardTitle>Créditos Restantes</CardTitle>
           <CardDescription>
-            You have {subscription?.remainingCredits || 0} photo enhancement credits remaining.
+            Você tem {subscription?.remainingCredits || 0} créditos de aprimoramento de fotos restantes.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {subscription?.remainingCredits ? (
             <p className="text-sm">
-              Each photo enhancement uses 1 credit. You can enhance {subscription.remainingCredits} more photos with
-              your current subscription.
+              Cada aprimoramento de foto usa 1 crédito. Você pode aprimorar mais {subscription.remainingCredits} fotos
+              com sua assinatura atual.
             </p>
           ) : (
-            <p className="text-sm">You have no credits left. Please purchase a subscription to enhance more photos.</p>
+            <p className="text-sm">
+              Você não tem créditos restantes. Por favor, adquira uma assinatura para aprimorar mais fotos.
+            </p>
           )}
         </CardContent>
         <CardFooter>
           <Button asChild variant={subscription?.remainingCredits ? "outline" : "default"} className="w-full">
             <a href="/dashboard/subscription">
-              {subscription?.remainingCredits ? "Manage Subscription" : "Get More Credits"}
+              {subscription?.remainingCredits ? "Gerenciar Assinatura" : "Obter Mais Créditos"}
             </a>
           </Button>
         </CardFooter>

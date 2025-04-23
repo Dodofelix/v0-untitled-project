@@ -31,11 +31,11 @@ export default function ResetPasswordPage() {
       await resetPassword(email)
       setSuccess(true)
       toast({
-        title: "Reset email sent",
-        description: "Check your email for a link to reset your password.",
+        title: "E-mail de redefinição enviado",
+        description: "Verifique seu e-mail para obter um link para redefinir sua senha.",
       })
     } catch (err: any) {
-      setError(err.message || "Failed to send reset email")
+      setError(err.message || "Falha ao enviar e-mail de redefinição")
     } finally {
       setIsLoading(false)
     }
@@ -45,9 +45,9 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Redefinir Senha</CardTitle>
           <CardDescription className="text-center">
-            Enter your email address and we'll send you a link to reset your password
+            Digite seu endereço de e-mail e enviaremos um link para redefinir sua senha
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -61,32 +61,34 @@ export default function ResetPasswordPage() {
           {success && (
             <Alert variant="default" className="bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400">
               <CheckCircle className="h-4 w-4" />
-              <AlertDescription>Password reset email sent. Check your inbox for further instructions.</AlertDescription>
+              <AlertDescription>
+                E-mail de redefinição de senha enviado. Verifique sua caixa de entrada para obter instruções adicionais.
+              </AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="nome@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Sending..." : "Send reset link"}
+              {isLoading ? "Enviando..." : "Enviar link de redefinição"}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Remember your password?{" "}
+            Lembrou sua senha?{" "}
             <Link href="/login" className="text-primary hover:underline">
-              Back to login
+              Voltar para o login
             </Link>
           </p>
         </CardFooter>

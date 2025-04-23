@@ -11,27 +11,27 @@ import { getStripeSession } from "@/lib/stripe"
 
 const pricingPlans = {
   price_basic: {
-    name: "Basic",
-    price: "R$ 47.90",
-    description: "5 enhanced photos",
+    name: "Básico",
+    price: "R$ 47,90",
+    description: "5 fotos aprimoradas",
     credits: 5,
   },
   price_standard: {
-    name: "Standard",
-    price: "R$ 77.90",
-    description: "10 enhanced photos",
+    name: "Padrão",
+    price: "R$ 77,90",
+    description: "10 fotos aprimoradas",
     credits: 10,
   },
   price_premium: {
     name: "Premium",
-    price: "R$ 111.70",
-    description: "15 enhanced photos",
+    price: "R$ 111,70",
+    description: "15 fotos aprimoradas",
     credits: 15,
   },
   price_pro: {
     name: "Pro",
-    price: "R$ 137.90",
-    description: "20 enhanced photos",
+    price: "R$ 137,90",
+    description: "20 fotos aprimoradas",
     credits: 20,
   },
 }
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
         setSearchParamsReady(true)
       }
     } catch (error) {
-      console.error("Error accessing search params:", error)
+      console.error("Erro ao acessar parâmetros de busca:", error)
     }
   }, [])
 
@@ -94,14 +94,14 @@ export default function CheckoutPage() {
       if (session && session.url) {
         window.location.href = session.url
       } else {
-        throw new Error("Failed to create checkout session")
+        throw new Error("Falha ao criar sessão de checkout")
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error)
+      console.error("Erro ao criar sessão de checkout:", error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
+        title: "Erro",
+        description: "Falha ao criar sessão de checkout. Por favor, tente novamente.",
       })
       setLoading(false)
     }
@@ -121,14 +121,14 @@ export default function CheckoutPage() {
       <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Invalid Plan</CardTitle>
-            <CardDescription>The selected plan is invalid. Please select a valid plan.</CardDescription>
+            <CardTitle>Plano Inválido</CardTitle>
+            <CardDescription>O plano selecionado é inválido. Por favor, selecione um plano válido.</CardDescription>
           </CardHeader>
           <CardFooter>
             <Button asChild className="w-full">
               <a href="/dashboard/subscription">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Subscription
+                Voltar para Assinaturas
               </a>
             </Button>
           </CardFooter>
@@ -144,13 +144,13 @@ export default function CheckoutPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
-          <CardDescription>Complete your purchase to enhance your photos.</CardDescription>
+          <CardDescription>Complete sua compra para aprimorar suas fotos.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="border rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h3 className="font-medium">{selectedPlan.name} Plan</h3>
+                <h3 className="font-medium">Plano {selectedPlan.name}</h3>
                 <p className="text-sm text-muted-foreground">{selectedPlan.description}</p>
               </div>
               <div className="text-xl font-bold">{selectedPlan.price}</div>
@@ -158,19 +158,19 @@ export default function CheckoutPage() {
             <ul className="space-y-2">
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-sm">{selectedPlan.credits} photo enhancements</span>
+                <span className="text-sm">{selectedPlan.credits} aprimoramentos de fotos</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-sm">High-quality results</span>
+                <span className="text-sm">Resultados de alta qualidade</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-sm">Secure cloud storage</span>
+                <span className="text-sm">Armazenamento seguro na nuvem</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-sm">Download in full resolution</span>
+                <span className="text-sm">Download em resolução completa</span>
               </li>
             </ul>
           </div>
@@ -187,16 +187,16 @@ export default function CheckoutPage() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
+                Processando...
               </>
             ) : (
-              "Proceed to Payment"
+              "Prosseguir para Pagamento"
             )}
           </Button>
           <Button variant="outline" asChild className="w-full">
             <a href="/dashboard/subscription">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Subscription
+              Voltar para Assinaturas
             </a>
           </Button>
         </CardFooter>

@@ -5,44 +5,44 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
-    question: "How does the photo enhancement work?",
+    question: "Como funciona o aprimoramento de fotos?",
     answer:
-      "Our AI-powered photo enhancement uses advanced machine learning algorithms to transform your photos into professional-quality images. The system improves lighting, framing, and details to simulate a photoshoot for a high-standard advertising campaign. It enhances the angle to highlight the product or person, creates realistic depth of field, balanced contrast, and vibrant colors. The result maintains sharp focus on the subject with a softly blurred background (bokeh effect), similar to what you'd achieve with a Canon 50mm f/1.2 lens. For food and product photography, it also improves the standardization of displayed ingredients or components.",
+      "Nosso aprimoramento de fotos com IA usa algoritmos avançados de aprendizado de máquina para transformar suas fotos em imagens de qualidade profissional. O sistema melhora a iluminação, o enquadramento e os detalhes para simular uma sessão fotográfica para uma campanha publicitária de alto padrão. Ele aprimora o ângulo para destacar o produto ou pessoa, cria profundidade de campo realista, contraste equilibrado e cores vibrantes. O resultado mantém o foco nítido no assunto com um fundo suavemente desfocado (efeito bokeh), semelhante ao que você conseguiria com uma lente Canon 50mm f/1.2. Para fotografia de alimentos e produtos, também melhora a padronização dos ingredientes ou componentes exibidos.",
   },
   {
-    question: "What file formats are supported?",
+    question: "Quais formatos de arquivo são suportados?",
     answer:
-      "Currently, we support JPEG (.jpg, .jpeg) and PNG (.png) file formats. We recommend uploading the highest quality image you have for the best results.",
+      "Atualmente, suportamos os formatos de arquivo JPEG (.jpg, .jpeg) e PNG (.png). Recomendamos o envio da imagem com a maior qualidade possível para obter os melhores resultados.",
   },
   {
-    question: "How many photos can I enhance?",
+    question: "Quantas fotos posso aprimorar?",
     answer:
-      "The number of photos you can enhance depends on your subscription plan. Each plan comes with a specific number of credits, and each photo enhancement uses one credit. You can view your remaining credits on your dashboard.",
+      "O número de fotos que você pode aprimorar depende do seu plano de assinatura. Cada plano vem com um número específico de créditos, e cada aprimoramento de foto usa um crédito. Você pode ver seus créditos restantes no seu painel.",
   },
   {
-    question: "Can I download the enhanced photos?",
+    question: "Posso baixar as fotos aprimoradas?",
     answer:
-      "Yes, you can download all enhanced photos in full resolution. The enhanced photos are stored securely in your account, and you can download them at any time.",
+      "Sim, você pode baixar todas as fotos aprimoradas em resolução completa. As fotos aprimoradas são armazenadas com segurança em sua conta, e você pode baixá-las a qualquer momento.",
   },
   {
-    question: "How long does the enhancement process take?",
+    question: "Quanto tempo leva o processo de aprimoramento?",
     answer:
-      "Most photos are enhanced within seconds. However, processing time may vary depending on the size and complexity of the image, as well as current system load.",
+      "A maioria das fotos é aprimorada em segundos. No entanto, o tempo de processamento pode variar dependendo do tamanho e da complexidade da imagem, bem como da carga atual do sistema.",
   },
   {
-    question: "Is my data secure?",
+    question: "Meus dados estão seguros?",
     answer:
-      "Yes, we take security very seriously. All uploaded photos are stored securely using Firebase Storage with strict access controls. We do not share your photos with third parties, and all processing is done securely.",
+      "Sim, levamos a segurança muito a sério. Todas as fotos enviadas são armazenadas com segurança usando o Firebase Storage com controles de acesso rigorosos. Não compartilhamos suas fotos com terceiros, e todo o processamento é feito com segurança.",
   },
   {
-    question: "Can I cancel my subscription?",
+    question: "Posso cancelar minha assinatura?",
     answer:
-      "Yes, you can cancel your subscription at any time. Your subscription will remain active until the end of the current billing period, and you can use any remaining credits during that time.",
+      "Sim, você pode cancelar sua assinatura a qualquer momento. Sua assinatura permanecerá ativa até o final do período de cobrança atual, e você pode usar quaisquer créditos restantes durante esse período.",
   },
   {
-    question: "What if I'm not satisfied with the results?",
+    question: "E se eu não estiver satisfeito com os resultados?",
     answer:
-      "If you're not satisfied with the enhancement results, please contact our support team. We're committed to your satisfaction and will work with you to address any concerns.",
+      "Se você não estiver satisfeito com os resultados do aprimoramento, entre em contato com nossa equipe de suporte. Estamos comprometidos com sua satisfação e trabalharemos com você para resolver quaisquer preocupações.",
   },
 ]
 
@@ -50,34 +50,36 @@ export default function HelpPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Help Center</h1>
-        <p className="text-muted-foreground">Find answers to common questions and learn how to use our service.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Central de Ajuda</h1>
+        <p className="text-muted-foreground">
+          Encontre respostas para perguntas comuns e aprenda a usar nosso serviço.
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
-            <CardDescription>Learn the basics of using PhotoEnhance AI.</CardDescription>
+            <CardTitle>Primeiros Passos</CardTitle>
+            <CardDescription>Aprenda o básico de como usar o PhotoEnhance AI.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium">1. Upload a photo</h3>
+                <h3 className="font-medium">1. Envie uma foto</h3>
                 <p className="text-sm text-muted-foreground">
-                  Navigate to the Enhance Photos section and upload a photo you want to enhance.
+                  Navegue até a seção Aprimorar Fotos e envie uma foto que deseja aprimorar.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium">2. Enhance your photo</h3>
+                <h3 className="font-medium">2. Aprimore sua foto</h3>
                 <p className="text-sm text-muted-foreground">
-                  Click the "Enhance Photo" button and wait for the AI to process your image.
+                  Clique no botão "Aprimorar Foto" e aguarde a IA processar sua imagem.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium">3. Download the result</h3>
+                <h3 className="font-medium">3. Baixe o resultado</h3>
                 <p className="text-sm text-muted-foreground">
-                  Once processing is complete, you can download your enhanced photo.
+                  Quando o processamento estiver concluído, você pode baixar sua foto aprimorada.
                 </p>
               </div>
             </div>
@@ -86,22 +88,22 @@ export default function HelpPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Contact Support</CardTitle>
-            <CardDescription>Need help? Contact our support team.</CardDescription>
+            <CardTitle>Contato com Suporte</CardTitle>
+            <CardDescription>Precisa de ajuda? Entre em contato com nossa equipe de suporte.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium">Email Support</h3>
-                <p className="text-sm text-muted-foreground">For general inquiries: support@photoenhance.ai</p>
+                <h3 className="font-medium">Suporte por E-mail</h3>
+                <p className="text-sm text-muted-foreground">Para dúvidas gerais: suporte@photoenhance.ai</p>
               </div>
               <div>
-                <h3 className="font-medium">Technical Support</h3>
-                <p className="text-sm text-muted-foreground">For technical issues: tech@photoenhance.ai</p>
+                <h3 className="font-medium">Suporte Técnico</h3>
+                <p className="text-sm text-muted-foreground">Para problemas técnicos: tech@photoenhance.ai</p>
               </div>
               <div>
-                <h3 className="font-medium">Business Hours</h3>
-                <p className="text-sm text-muted-foreground">Monday to Friday, 9:00 AM to 5:00 PM (GMT-3)</p>
+                <h3 className="font-medium">Horário Comercial</h3>
+                <p className="text-sm text-muted-foreground">Segunda a sexta, das 9:00 às 17:00 (GMT-3)</p>
               </div>
             </div>
           </CardContent>
@@ -110,8 +112,8 @@ export default function HelpPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
-          <CardDescription>Find answers to common questions about our service.</CardDescription>
+          <CardTitle>Perguntas Frequentes</CardTitle>
+          <CardDescription>Encontre respostas para perguntas comuns sobre nosso serviço.</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">

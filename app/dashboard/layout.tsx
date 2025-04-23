@@ -42,7 +42,7 @@ export default function DashboardLayout({
       <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <div className="flex flex-1 items-center gap-4 md:gap-6">
           <Button variant="outline" size="icon" className="md:hidden">
-            <span className="sr-only">Toggle menu</span>
+            <span className="sr-only">Alternar menu</span>
           </Button>
           <span className="font-bold">PhotoEnhance AI</span>
         </div>

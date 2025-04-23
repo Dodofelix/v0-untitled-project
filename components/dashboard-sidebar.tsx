@@ -7,27 +7,27 @@ import { cn } from "@/lib/utils"
 
 const sidebarItems = [
   {
-    title: "Dashboard",
+    title: "Painel",
     href: "/dashboard",
     icon: Home,
   },
   {
-    title: "Enhance Photos",
+    title: "Aprimorar Fotos",
     href: "/dashboard/enhance",
     icon: ImageIcon,
   },
   {
-    title: "Subscription",
+    title: "Assinatura",
     href: "/dashboard/subscription",
     icon: CreditCard,
   },
   {
-    title: "Settings",
+    title: "Configurações",
     href: "/dashboard/settings",
     icon: Settings,
   },
   {
-    title: "Help",
+    title: "Ajuda",
     href: "/dashboard/help",
     icon: HelpCircle,
   },

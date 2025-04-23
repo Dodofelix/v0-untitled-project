@@ -84,11 +84,11 @@ export default function SettingsPage() {
       })
 
       toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
+        title: "Perfil atualizado",
+        description: "Seu perfil foi atualizado com sucesso.",
       })
     } catch (error: any) {
-      setError(error.message || "Failed to update profile")
+      setError(error.message || "Falha ao atualizar o perfil")
     } finally {
       setSaving(false)
     }
@@ -111,11 +111,11 @@ export default function SettingsPage() {
       })
 
       toast({
-        title: "Email updated",
-        description: "Your email has been updated successfully.",
+        title: "E-mail atualizado",
+        description: "Seu e-mail foi atualizado com sucesso.",
       })
     } catch (error: any) {
-      setError(error.message || "Failed to update email")
+      setError(error.message || "Falha ao atualizar o e-mail")
     } finally {
       setSaving(false)
     }
@@ -126,7 +126,7 @@ export default function SettingsPage() {
     if (!user || !user.email) return
 
     if (newPassword !== confirmPassword) {
-      setError("New passwords do not match")
+      setError("As novas senhas não coincidem")
       return
     }
 
@@ -147,11 +147,11 @@ export default function SettingsPage() {
       setConfirmPassword("")
 
       toast({
-        title: "Password updated",
-        description: "Your password has been updated successfully.",
+        title: "Senha atualizada",
+        description: "Sua senha foi atualizada com sucesso.",
       })
     } catch (error: any) {
-      setError(error.message || "Failed to update password")
+      setError(error.message || "Falha ao atualizar a senha")
     } finally {
       setSaving(false)
     }
@@ -168,8 +168,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">Manage your account settings and preferences.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
+        <p className="text-muted-foreground">Gerencie suas configurações e preferências de conta.</p>
       </div>
 
       {error && (
@@ -182,23 +182,23 @@ export default function SettingsPage() {
       <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Update your profile information.</CardDescription>
+            <CardTitle>Perfil</CardTitle>
+            <CardDescription>Atualize suas informações de perfil.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleProfileUpdate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="displayName">Display Name</Label>
+                <Label htmlFor="displayName">Nome de Exibição</Label>
                 <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
               </div>
               <Button type="submit" disabled={saving}>
                 {saving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    Salvando...
                   </>
                 ) : (
-                  "Save Changes"
+                  "Salvar Alterações"
                 )}
               </Button>
             </form>
@@ -207,23 +207,23 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Email</CardTitle>
-            <CardDescription>Update your email address.</CardDescription>
+            <CardTitle>E-mail</CardTitle>
+            <CardDescription>Atualize seu endereço de e-mail.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleEmailUpdate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-mail</Label>
                 <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <Button type="submit" disabled={saving}>
                 {saving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    Salvando...
                   </>
                 ) : (
-                  "Update Email"
+                  "Atualizar E-mail"
                 )}
               </Button>
             </form>
@@ -232,13 +232,13 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Password</CardTitle>
-            <CardDescription>Update your password.</CardDescription>
+            <CardTitle>Senha</CardTitle>
+            <CardDescription>Atualize sua senha.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handlePasswordUpdate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
+                <Label htmlFor="currentPassword">Senha Atual</Label>
                 <Input
                   id="currentPassword"
                   type="password"
@@ -247,7 +247,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword">Nova Senha</Label>
                 <Input
                   id="newPassword"
                   type="password"
@@ -256,7 +256,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -268,10 +268,10 @@ export default function SettingsPage() {
                 {saving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    Salvando...
                   </>
                 ) : (
-                  "Update Password"
+                  "Atualizar Senha"
                 )}
               </Button>
             </form>

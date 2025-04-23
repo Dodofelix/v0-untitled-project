@@ -22,14 +22,14 @@ export function UserNav() {
     try {
       await logOut()
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
+        title: "Desconectado",
+        description: "Você foi desconectado com sucesso.",
       })
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to log out. Please try again.",
+        title: "Erro",
+        description: "Falha ao sair. Por favor, tente novamente.",
       })
     }
   }
@@ -47,21 +47,21 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.displayName || "User"}</p>
+            <p className="text-sm font-medium leading-none">{user?.displayName || "Usuário"}</p>
             <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <a href="/dashboard/settings">Settings</a>
+            <a href="/dashboard/settings">Configurações</a>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href="/dashboard/subscription">Subscription</a>
+            <a href="/dashboard/subscription">Assinatura</a>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

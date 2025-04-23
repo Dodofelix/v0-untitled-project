@@ -43,7 +43,7 @@ export default function RegisterPage() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError("As senhas não coincidem")
       return
     }
 
@@ -54,8 +54,8 @@ export default function RegisterPage() {
       // Create user document in Firestore
       await createUser(email, { email })
       toast({
-        title: "Registration successful",
-        description: "Welcome to PhotoEnhance AI!",
+        title: "Cadastro realizado com sucesso",
+        description: "Bem-vindo ao PhotoEnhance AI!",
       })
 
       // Redirecionar para a página solicitada ou para o dashboard
@@ -69,15 +69,15 @@ export default function RegisterPage() {
 
       // Mensagens de erro mais amigáveis
       if (err.code === "auth/email-already-in-use") {
-        setError("This email is already registered. Please login or use a different email.")
+        setError("Este e-mail já está registrado. Por favor, faça login ou use um e-mail diferente.")
       } else if (err.code === "auth/invalid-email") {
-        setError("Invalid email address. Please check and try again.")
+        setError("Endereço de e-mail inválido. Por favor, verifique e tente novamente.")
       } else if (err.code === "auth/weak-password") {
-        setError("Password is too weak. Please use a stronger password.")
+        setError("Senha muito fraca. Por favor, use uma senha mais forte.")
       } else if (err.code === "auth/invalid-api-key") {
-        setError("Authentication configuration error. Please contact support.")
+        setError("Erro de configuração de autenticação. Por favor, entre em contato com o suporte.")
       } else {
-        setError(err.message || "Failed to sign up")
+        setError(err.message || "Falha ao se cadastrar")
       }
     } finally {
       setIsLoading(false)
@@ -91,8 +91,8 @@ export default function RegisterPage() {
     try {
       await googleSignIn()
       toast({
-        title: "Registration successful",
-        description: "Welcome to PhotoEnhance AI!",
+        title: "Cadastro realizado com sucesso",
+        description: "Bem-vindo ao PhotoEnhance AI!",
       })
 
       // Redirecionar para a página solicitada ou para o dashboard
@@ -106,17 +106,23 @@ export default function RegisterPage() {
 
       // Mensagens de erro mais amigáveis
       if (err.message.includes("auth-domain-config-required") || err.message.includes("Authentication domain")) {
-        setError("Firebase authentication domain is not configured correctly. Please contact support.")
+        setError(
+          "O domínio de autenticação do Firebase não está configurado corretamente. Entre em contato com o suporte.",
+        )
       } else if (err.message.includes("invalid-api-key")) {
-        setError("Firebase API key is invalid. Please contact support.")
+        setError("A chave de API do Firebase é inválida. Entre em contato com o suporte.")
       } else if (err.message.includes("redirect_uri_mismatch")) {
-        setError("Authentication domain mismatch. Please ensure you're accessing the site from an authorized domain.")
+        setError(
+          "Incompatibilidade de domínio de autenticação. Certifique-se de estar acessando o site a partir de um domínio autorizado.",
+        )
       } else if (err.code === "auth/popup-closed-by-user") {
-        setError("Registration popup was closed. Please try again.")
+        setError("O popup de cadastro foi fechado. Por favor, tente novamente.")
       } else if (err.code === "auth/popup-blocked") {
-        setError("Registration popup was blocked by your browser. Please allow popups for this site and try again.")
+        setError(
+          "O popup de cadastro foi bloqueado pelo seu navegador. Por favor, permita popups para este site e tente novamente.",
+        )
       } else {
-        setError(err.message || "Failed to sign up with Google")
+        setError(err.message || "Falha ao se cadastrar com o Google")
       }
     } finally {
       setIsGoogleLoading(false)
@@ -127,7 +133,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Criar uma conta</CardTitle>
           <CardDescription className="text-center">
             Crie sua conta para continuar
             {redirectPath && " e finalizar sua compra"}
@@ -141,7 +147,7 @@ export default function RegisterPage() {
             >
               <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
               <AlertDescription className="text-yellow-600 dark:text-yellow-400">
-                Firebase authentication is not initialized. Some features may not work properly.
+                A autenticação do Firebase não está inicializada. Alguns recursos podem não funcionar corretamente.
               </AlertDescription>
             </Alert>
           )}
@@ -155,18 +161,18 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="nome@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -176,7 +182,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -186,7 +192,7 @@ export default function RegisterPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading || !firebaseInitialized}>
-              {isLoading ? "Creating account..." : "Create account"}
+              {isLoading ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
 
@@ -195,7 +201,7 @@ export default function RegisterPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
             </div>
           </div>
 
@@ -209,7 +215,7 @@ export default function RegisterPage() {
             {isGoogleLoading ? (
               <>
                 <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
-                Signing in...
+                Entrando...
               </>
             ) : (
               <>
@@ -235,12 +241,12 @@ export default function RegisterPage() {
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
+            Já tem uma conta?{" "}
             <Link
               href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"}
               className="text-primary hover:underline"
             >
-              Sign in
+              Entrar
             </Link>
           </p>
         </CardFooter>

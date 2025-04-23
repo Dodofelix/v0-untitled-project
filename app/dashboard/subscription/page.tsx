@@ -13,23 +13,28 @@ import type { Subscription } from "@/models/user"
 
 const pricingPlans = [
   {
-    name: "Basic",
-    price: "R$ 47.90",
-    description: "Perfect for beginners",
-    features: ["5 enhanced photos", "High-quality results", "Secure cloud storage", "Download in full resolution"],
+    name: "Básico",
+    price: "R$ 47,90",
+    description: "Perfeito para iniciantes",
+    features: [
+      "5 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+    ],
     priceId: "price_basic",
     credits: 5,
   },
   {
-    name: "Standard",
-    price: "R$ 77.90",
-    description: "Most popular choice",
+    name: "Padrão",
+    price: "R$ 77,90",
+    description: "Escolha mais popular",
     features: [
-      "10 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
+      "10 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
     ],
     priceId: "price_standard",
     credits: 10,
@@ -37,31 +42,31 @@ const pricingPlans = [
   },
   {
     name: "Premium",
-    price: "R$ 111.70",
-    description: "For photo enthusiasts",
+    price: "R$ 111,70",
+    description: "Para entusiastas de fotografia",
     features: [
-      "15 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
-      "Advanced enhancement options",
+      "15 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
+      "Opções avançadas de aprimoramento",
     ],
     priceId: "price_premium",
     credits: 15,
   },
   {
     name: "Pro",
-    price: "R$ 137.90",
-    description: "For professionals",
+    price: "R$ 137,90",
+    description: "Para profissionais",
     features: [
-      "20 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
-      "Advanced enhancement options",
-      "Email support",
+      "20 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
+      "Opções avançadas de aprimoramento",
+      "Suporte por email",
     ],
     priceId: "price_pro",
     credits: 20,
@@ -92,19 +97,19 @@ export default function SubscriptionPage() {
       const canceled = searchParams.get("canceled")
 
       if (success === "true") {
-        setSuccessMessage("Payment successful! Your subscription has been activated.")
+        setSuccessMessage("Pagamento bem-sucedido! Sua assinatura foi ativada.")
         toast({
-          title: "Payment Successful",
-          description: "Your subscription has been activated successfully.",
+          title: "Pagamento Bem-sucedido",
+          description: "Sua assinatura foi ativada com sucesso.",
           variant: "default",
         })
       }
 
       if (canceled === "true") {
-        setErrorMessage("Payment was canceled. Your subscription has not been activated.")
+        setErrorMessage("Pagamento foi cancelado. Sua assinatura não foi ativada.")
         toast({
-          title: "Payment Canceled",
-          description: "Your subscription has not been activated.",
+          title: "Pagamento Cancelado",
+          description: "Sua assinatura não foi ativada.",
           variant: "destructive",
         })
       }
@@ -118,7 +123,7 @@ export default function SubscriptionPage() {
           const userSubscription = await getUserSubscription(user.uid)
           setSubscription(userSubscription)
         } catch (error) {
-          console.error("Error fetching subscription:", error)
+          console.error("Erro ao buscar assinatura:", error)
         } finally {
           setLoading(false)
         }
@@ -140,14 +145,14 @@ export default function SubscriptionPage() {
       if (session && session.url) {
         window.location.href = session.url
       } else {
-        throw new Error("Failed to create checkout session")
+        throw new Error("Falha ao criar sessão de checkout")
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error)
+      console.error("Erro ao criar sessão de checkout:", error)
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
+        title: "Erro",
+        description: "Falha ao criar sessão de checkout. Por favor, tente novamente.",
       })
     } finally {
       setCheckoutLoading(null)
@@ -165,8 +170,8 @@ export default function SubscriptionPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Subscription</h1>
-        <p className="text-muted-foreground">Manage your subscription and credits.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Assinatura</h1>
+        <p className="text-muted-foreground">Gerencie sua assinatura e créditos.</p>
       </div>
 
       {successMessage && (
@@ -188,21 +193,21 @@ export default function SubscriptionPage() {
       {subscription && (
         <Card>
           <CardHeader>
-            <CardTitle>Current Subscription</CardTitle>
-            <CardDescription>Your current subscription details.</CardDescription>
+            <CardTitle>Assinatura Atual</CardTitle>
+            <CardDescription>Detalhes da sua assinatura atual.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium">Status</p>
-                <p className="text-sm">{subscription.status}</p>
+                <p className="text-sm">{subscription.status === "active" ? "Ativa" : "Inativa"}</p>
               </div>
               <div>
-                <p className="text-sm font-medium">Remaining Credits</p>
+                <p className="text-sm font-medium">Créditos Restantes</p>
                 <p className="text-sm">{subscription.remainingCredits}</p>
               </div>
               <div>
-                <p className="text-sm font-medium">Valid Until</p>
+                <p className="text-sm font-medium">Válida Até</p>
                 <p className="text-sm">{new Date(subscription.periodEnd).toLocaleDateString()}</p>
               </div>
             </div>
@@ -211,7 +216,7 @@ export default function SubscriptionPage() {
       )}
 
       <div>
-        <h2 className="text-xl font-bold tracking-tight mb-4">Available Plans</h2>
+        <h2 className="text-xl font-bold tracking-tight mb-4">Planos Disponíveis</h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {pricingPlans.map((plan) => (
             <Card
@@ -219,7 +224,7 @@ export default function SubscriptionPage() {
               className={`overflow-hidden ${plan.popular ? "border-purple-500 dark:border-purple-400" : ""}`}
             >
               {plan.popular && (
-                <div className="bg-purple-500 text-white text-xs font-medium px-3 py-1 text-center">MOST POPULAR</div>
+                <div className="bg-purple-500 text-white text-xs font-medium px-3 py-1 text-center">MAIS POPULAR</div>
               )}
               <CardHeader>
                 <CardTitle>{plan.name}</CardTitle>
@@ -245,12 +250,12 @@ export default function SubscriptionPage() {
                   {checkoutLoading === plan.priceId ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
+                      Processando...
                     </>
                   ) : (
                     <>
                       <CreditCard className="mr-2 h-4 w-4" />
-                      Purchase
+                      Comprar
                     </>
                   )}
                 </Button>
