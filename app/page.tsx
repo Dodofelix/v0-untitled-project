@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import PricingSection from "@/components/pricing-section"
 import { ArrowRight, ImageIcon, Zap, Shield } from "lucide-react"
+import ImageComparisonSlider from "@/components/image-comparison-slider"
 
 export default function Home() {
   return (
@@ -37,29 +38,16 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative">
-                <div className="relative rounded-xl overflow-hidden shadow-2xl">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="relative">
-                      <img
-                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1EFAE062-2B00-4FB0-AAC5-6D9FA2E00F38.PNG-cSovq5mlhLSYm5jIkh9HQlYYQUYv0w.jpeg"
-                        alt="Before enhancement"
-                        className="relative z-10 rounded-lg w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded z-20">
-                        Before
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <img
-                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/38437EF2-5BC6-4AB5-AF9B-889A8350BC0D.PNG-qVeJ6axYTPRxWd1lARiX1oUdDzpuMz.png"
-                        alt="After enhancement"
-                        className="relative z-10 rounded-lg w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded z-20">
-                        After
-                      </div>
-                    </div>
-                  </div>
+                <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-[4/3] w-full">
+                  <ImageComparisonSlider
+                    beforeImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1EFAE062-2B00-4FB0-AAC5-6D9FA2E00F38.PNG-cSovq5mlhLSYm5jIkh9HQlYYQUYv0w.jpeg"
+                    afterImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/38437EF2-5BC6-4AB5-AF9B-889A8350BC0D.PNG-qVeJ6axYTPRxWd1lARiX1oUdDzpuMz.png"
+                    beforeAlt="Before enhancement"
+                    afterAlt="After enhancement"
+                  />
+                </div>
+                <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                  Deslize para ver a transformação ← →
                 </div>
               </div>
             </div>

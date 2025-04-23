@@ -8,6 +8,7 @@ import { getUserSubscription, getUserPhotoEnhancements } from "@/lib/firestore"
 import type { Subscription, PhotoEnhancement } from "@/models/user"
 import { Loader2, ImageIcon, CreditCard, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import ImageComparisonSlider from "@/components/image-comparison-slider"
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -118,11 +119,18 @@ export default function DashboardPage() {
               <Card key={enhancement.id}>
                 <CardContent className="p-0">
                   <div className="relative aspect-square">
-                    <img
-                      src={enhancement.enhancedUrl || "/placeholder.svg"}
-                      alt="Enhanced photo"
-                      className="object-cover w-full h-full rounded-t-lg"
-                    />
+                    {enhancement.originalUrl && enhancement.enhancedUrl ? (
+                      <ImageComparisonSlider
+                        beforeImage={enhancement.originalUrl}
+                        afterImage={enhancement.enhancedUrl}
+                      />
+                    ) : (
+                      <img
+                        src={enhancement.enhancedUrl || "/placeholder.svg"}
+                        alt="Enhanced photo"
+                        className="object-cover w-full h-full rounded-t-lg"
+                      />
+                    )}
                   </div>
                   <div className="p-4">
                     <p className="text-sm text-muted-foreground">

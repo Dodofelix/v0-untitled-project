@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ import {
 } from "@/lib/firestore"
 import { enhanceImage } from "@/lib/openai"
 import type { Subscription } from "@/models/user"
+import ImageComparisonSlider from "@/components/image-comparison-slider"
 
 export default function EnhancePage() {
   const { user } = useAuth()
@@ -31,7 +32,7 @@ export default function EnhancePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
-  useState(() => {
+  useEffect(() => {
     const fetchSubscription = async () => {
       if (user) {
         try {
@@ -46,7 +47,7 @@ export default function EnhancePage() {
     }
 
     fetchSubscription()
-  })
+  }, [user])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -225,13 +226,12 @@ export default function EnhancePage() {
                   <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
                   <p className="text-sm text-muted-foreground">Enhancing your photo...</p>
                 </div>
-              ) : enhancedUrl ? (
+              ) : previewUrl && enhancedUrl ? (
                 <div className="relative w-full aspect-square">
-                  <img
-                    src={enhancedUrl || "/placeholder.svg"}
-                    alt="Enhanced"
-                    className="object-contain w-full h-full"
-                  />
+                  <ImageComparisonSlider beforeImage={previewUrl} afterImage={enhancedUrl} />
+                  <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                    Deslize para comparar ← →
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
