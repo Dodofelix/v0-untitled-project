@@ -19,6 +19,7 @@ import {
 import { enhanceImage } from "@/lib/openai"
 import type { Subscription } from "@/models/user"
 import ClientImage from "@/components/client-image"
+import EnhanceImageComparison from "@/components/enhance-image-comparison"
 
 export default function EnhancePage() {
   const { user } = useAuth()
@@ -226,10 +227,8 @@ export default function EnhancePage() {
                   <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
                   <p className="text-sm text-muted-foreground">Enhancing your photo...</p>
                 </div>
-              ) : enhancedUrl ? (
-                <div className="relative w-full aspect-square">
-                  <ClientImage src={enhancedUrl} alt="Enhanced photo" className="object-contain w-full h-full" />
-                </div>
+              ) : previewUrl && enhancedUrl ? (
+                <EnhanceImageComparison previewUrl={previewUrl} enhancedUrl={enhancedUrl} />
               ) : (
                 <div className="flex flex-col items-center">
                   <ImageIcon className="h-10 w-10 text-muted-foreground mb-4" />

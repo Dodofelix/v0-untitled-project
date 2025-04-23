@@ -8,7 +8,7 @@ import { getUserSubscription, getUserPhotoEnhancements } from "@/lib/firestore"
 import type { Subscription, PhotoEnhancement } from "@/models/user"
 import { Loader2, ImageIcon, CreditCard, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import ClientImage from "@/components/client-image"
+import DashboardImageComparison from "@/components/dashboard-image-comparison"
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -119,22 +119,16 @@ export default function DashboardPage() {
               <Card key={enhancement.id}>
                 <CardContent className="p-0">
                   <div className="relative aspect-square">
-                    {enhancement.enhancedUrl ? (
-                      <ClientImage
-                        src={enhancement.enhancedUrl}
-                        alt="Enhanced photo"
-                        className="object-cover w-full h-full rounded-t-lg"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-t-lg">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Imagem não disponível</p>
-                      </div>
-                    )}
+                    <DashboardImageComparison
+                      originalUrl={enhancement.originalUrl}
+                      enhancedUrl={enhancement.enhancedUrl}
+                    />
                   </div>
                   <div className="p-4">
                     <p className="text-sm text-muted-foreground">
                       Enhanced on {new Date(enhancement.createdAt).toLocaleDateString()}
                     </p>
+                    <p className="text-xs text-muted-foreground mt-1">Passe o mouse para revelar a transformação</p>
                   </div>
                 </CardContent>
               </Card>

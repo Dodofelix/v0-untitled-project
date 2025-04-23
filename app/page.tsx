@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import PricingSection from "@/components/pricing-section"
 import { ArrowRight, ImageIcon, Zap, Shield } from "lucide-react"
+import ClientImageComparison from "@/components/client-image-comparison"
 
 export default function Home() {
   return (
@@ -38,27 +39,10 @@ export default function Home() {
               </div>
               <div className="relative">
                 <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-[4/3] w-full">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <img
-                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1EFAE062-2B00-4FB0-AAC5-6D9FA2E00F38.PNG-cSovq5mlhLSYm5jIkh9HQlYYQUYv0w.jpeg"
-                        alt="Before enhancement"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <div className="mt-2 text-center text-sm">Before</div>
-                    </div>
-                    <div>
-                      <img
-                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/38437EF2-5BC6-4AB5-AF9B-889A8350BC0D.PNG-qVeJ6axYTPRxWd1lARiX1oUdDzpuMz.png"
-                        alt="After enhancement"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <div className="mt-2 text-center text-sm">After</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                  Veja a transformação antes e depois
+                  <ClientImageComparison
+                    beforeImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1EFAE062-2B00-4FB0-AAC5-6D9FA2E00F38.PNG-cSovq5mlhLSYm5jIkh9HQlYYQUYv0w.jpeg"
+                    afterImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/38437EF2-5BC6-4AB5-AF9B-889A8350BC0D.PNG-qVeJ6axYTPRxWd1lARiX1oUdDzpuMz.png"
+                  />
                 </div>
               </div>
             </div>
