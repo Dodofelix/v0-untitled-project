@@ -50,7 +50,16 @@ export default function LoginPage() {
         description: "Welcome back to PhotoEnhance AI!",
       })
     } catch (err: any) {
-      setError(err.message || "Failed to sign in with Google")
+      console.error("Google Sign In Error in component:", err)
+
+      // Mensagem de erro mais amigável
+      if (err.message.includes("auth-domain-config-required")) {
+        setError(
+          "Firebase authentication domain is not configured. Please contact support or try another login method.",
+        )
+      } else {
+        setError(err.message || "Failed to sign in with Google")
+      }
     } finally {
       setIsLoading(false)
     }

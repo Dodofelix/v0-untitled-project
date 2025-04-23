@@ -12,6 +12,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
+  browserPopupRedirectResolver,
 } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
@@ -80,10 +81,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const googleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider()
-      await signInWithPopup(auth, provider)
-      router.push("/dashboard")
-    } catch (error) {
-      throw error
+
+      // Adicionar escopo para o email
+      provider.addScope("email")
+
+      // Usar o resolver de popup explicitamente
+      const result = await signInWithPopup(auth, provider, browserPopupRedirectResolver)
+
+      // Verificar se o login foi bem-sucedido
+      if (result.user) {
+        router.push("/dashboard")
+      }
+    } catch (error: any) {
+      console.error("Google Sign In Error:", error)
+
+      // Mensagens de erro mais específicas
+      if (error.code === "auth/auth-domain-config-required") {
+        throw new Error("Authentication domain not configured. Please contact support.")
+      } else if (error.code === "auth/popup-blocked") {
+        throw new Error("Popup was blocked by your browser. Please allow popups for this site.")
+      } else if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Authentication popup was closed before completing the sign in process.")
+      } else {
+        throw error
+      }
     }
   }
 

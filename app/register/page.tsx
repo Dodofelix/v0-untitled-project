@@ -60,7 +60,16 @@ export default function RegisterPage() {
         description: "Welcome to PhotoEnhance AI!",
       })
     } catch (err: any) {
-      setError(err.message || "Failed to sign up with Google")
+      console.error("Google Sign In Error in component:", err)
+
+      // Mensagem de erro mais amigável
+      if (err.message.includes("auth-domain-config-required")) {
+        setError(
+          "Firebase authentication domain is not configured. Please contact support or try another registration method.",
+        )
+      } else {
+        setError(err.message || "Failed to sign up with Google")
+      }
     } finally {
       setIsLoading(false)
     }
