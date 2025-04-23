@@ -18,7 +18,6 @@ import {
 } from "@/lib/firestore"
 import { enhanceImage } from "@/lib/openai"
 import type { Subscription } from "@/models/user"
-import ImageComparisonSlider from "@/components/image-comparison-slider"
 
 export default function EnhancePage() {
   const { user } = useAuth()
@@ -183,7 +182,7 @@ export default function EnhancePage() {
                     alt="Preview"
                     className="object-contain w-full h-full"
                     onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg"
+                      e.currentTarget.src = "/placeholder.svg?height=400&width=400"
                     }}
                   />
                 </div>
@@ -233,12 +232,16 @@ export default function EnhancePage() {
                   <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
                   <p className="text-sm text-muted-foreground">Enhancing your photo...</p>
                 </div>
-              ) : previewUrl && enhancedUrl ? (
+              ) : enhancedUrl ? (
                 <div className="relative w-full aspect-square">
-                  <ImageComparisonSlider beforeImage={previewUrl} afterImage={enhancedUrl} />
-                  <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                    Deslize para comparar ← →
-                  </div>
+                  <img
+                    src={enhancedUrl || "/placeholder.svg"}
+                    alt="Enhanced photo"
+                    className="object-contain w-full h-full"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg?height=400&width=400"
+                    }}
+                  />
                 </div>
               ) : (
                 <div className="flex flex-col items-center">

@@ -8,7 +8,6 @@ import { getUserSubscription, getUserPhotoEnhancements } from "@/lib/firestore"
 import type { Subscription, PhotoEnhancement } from "@/models/user"
 import { Loader2, ImageIcon, CreditCard, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import ImageComparisonSlider from "@/components/image-comparison-slider"
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -119,20 +118,19 @@ export default function DashboardPage() {
               <Card key={enhancement.id}>
                 <CardContent className="p-0">
                   <div className="relative aspect-square">
-                    {enhancement.originalUrl && enhancement.enhancedUrl ? (
-                      <ImageComparisonSlider
-                        beforeImage={enhancement.originalUrl}
-                        afterImage={enhancement.enhancedUrl}
-                      />
-                    ) : (
+                    {enhancement.enhancedUrl ? (
                       <img
                         src={enhancement.enhancedUrl || "/placeholder.svg"}
                         alt="Enhanced photo"
                         className="object-cover w-full h-full rounded-t-lg"
                         onError={(e) => {
-                          e.currentTarget.src = "/placeholder.svg"
+                          e.currentTarget.src = "/placeholder.svg?height=400&width=400"
                         }}
                       />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-t-lg">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Imagem não disponível</p>
+                      </div>
                     )}
                   </div>
                   <div className="p-4">
