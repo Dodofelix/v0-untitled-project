@@ -16,10 +16,11 @@ import {
   getUserSubscription,
   updateSubscriptionCredits,
 } from "@/lib/firestore"
-import { enhanceImage } from "@/lib/openai"
 import type { Subscription } from "@/models/user"
 import ClientImage from "@/components/client-image"
 import EnhanceImageComparison from "@/components/enhance-image-comparison"
+// First, import the compression utility
+import { compressImage, formatFileSize } from "@/lib/image-utils"
 
 export default function EnhancePage() {
   const { user } = useAuth()
@@ -32,6 +33,10 @@ export default function EnhancePage() {
   const [isLoading, setIsLoading] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
+  // Add a file size state
+  const [fileSize, setFileSize] = useState<string | null>(null)
+  const [originalFileSize, setOriginalFileSize] = useState<string | null>(null)
+  const [compressedFileSize, setCompressedFileSize] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -50,30 +55,164 @@ export default function EnhancePage() {
     fetchSubscription()
   }, [user])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateFile = (file: File): boolean => {
+    // Check file size (15MB limit)
+    const MAX_FILE_SIZE = 15 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`File size exceeds the maximum limit of 15MB.`)
+      return false
+    }
+
+    // Check file type
+    if (!file.type.startsWith("image/")) {
+      setError("Only image files are allowed.")
+      return false
+    }
+
+    return true
+  }
+
+  // Update the handleFileChange function to compress images
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (selectedFile) {
-      // Reset previous state
-      setFile(selectedFile)
-      setPreviewUrl(URL.createObjectURL(selectedFile))
-      setEnhancedUrl(null)
-      setError(null)
+      // Store original file size
+      setOriginalFileSize(formatFileSize(selectedFile.size))
+
+      if (!validateFile(selectedFile)) {
+        return
+      }
+
+      try {
+        // Show loading state while compressing
+        setIsProcessing(true)
+
+        // Compress the image (max 5MB, 70% quality)
+        const compressed = await compressImage(selectedFile, 5, 0.7)
+
+        // Update file size information
+        setCompressedFileSize(formatFileSize(compressed.size))
+        setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(selectedFile.size)})`)
+
+        // Reset previous state
+        setFile(compressed)
+        setPreviewUrl(URL.createObjectURL(compressed))
+        setEnhancedUrl(null)
+        setError(null)
+      } catch (error) {
+        console.error("Error compressing image:", error)
+        // Fall back to original file if compression fails
+        setFile(selectedFile)
+        setPreviewUrl(URL.createObjectURL(selectedFile))
+        setFileSize(formatFileSize(selectedFile.size))
+      } finally {
+        setIsProcessing(false)
+      }
     }
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  // Update the handleDrop function to compress images
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     const droppedFile = e.dataTransfer.files?.[0]
     if (droppedFile) {
-      setFile(droppedFile)
-      setPreviewUrl(URL.createObjectURL(droppedFile))
-      setEnhancedUrl(null)
-      setError(null)
+      // Store original file size
+      setOriginalFileSize(formatFileSize(droppedFile.size))
+
+      if (!validateFile(droppedFile)) {
+        return
+      }
+
+      try {
+        // Show loading state while compressing
+        setIsProcessing(true)
+
+        // Compress the image (max 5MB, 70% quality)
+        const compressed = await compressImage(droppedFile, 5, 0.7)
+
+        // Update file size information
+        setCompressedFileSize(formatFileSize(compressed.size))
+        setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(droppedFile.size)})`)
+
+        // Reset previous state
+        setFile(compressed)
+        setPreviewUrl(URL.createObjectURL(compressed))
+        setEnhancedUrl(null)
+        setError(null)
+      } catch (error) {
+        console.error("Error compressing image:", error)
+        // Fall back to original file if compression fails
+        setFile(droppedFile)
+        setPreviewUrl(URL.createObjectURL(droppedFile))
+        setFileSize(formatFileSize(droppedFile.size))
+      } finally {
+        setIsProcessing(false)
+      }
     }
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
+  }
+
+  // Call the API route instead of directly using OpenAI
+  const callEnhanceAPI = async (imageUrl: string) => {
+    console.log("Calling enhance API with image URL...")
+
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 second timeout
+
+    try {
+      const response = await fetch("/api/enhance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl }),
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      // Get the response text first for debugging
+      const responseText = await response.text()
+      console.log("API response text:", responseText)
+
+      // Try to parse the response as JSON
+      let data
+      try {
+        data = JSON.parse(responseText)
+        console.log("API response parsed:", data)
+      } catch (jsonError) {
+        console.error("Error parsing JSON response:", jsonError)
+        throw new Error("Invalid response from server: " + responseText.substring(0, 100))
+      }
+
+      // Check if we have an error but also a fallback URL
+      if (data.error && data.fallback && data.enhancedImageUrl) {
+        console.warn("API returned an error but provided fallback:", data.error)
+        toast({
+          title: "Enhancement limited",
+          description: data.error,
+          variant: "warning",
+        })
+        return data.enhancedImageUrl
+      }
+
+      // Check if we have the enhanced image URL
+      if (!data.enhancedImageUrl) {
+        console.error("No enhanced image URL in response:", data)
+        throw new Error(data.error || "No enhanced image URL returned")
+      }
+
+      return data.enhancedImageUrl
+    } catch (error) {
+      console.error("Error in callEnhanceAPI:", error)
+      // Return the original image as fallback in case of error
+      console.log("Returning original image as fallback")
+      return imageUrl
+    }
   }
 
   const handleEnhance = async () => {
@@ -99,8 +238,8 @@ export default function EnhancePage() {
         status: "processing",
       })
 
-      // Call OpenAI API to enhance the image
-      const enhancedImageUrl = await enhanceImage(originalUrl)
+      // Call API to enhance the image instead of directly using OpenAI
+      const enhancedImageUrl = await callEnhanceAPI(originalUrl)
 
       // Save the enhanced image to Firebase Storage
       const { downloadUrl: storedEnhancedUrl } = await saveEnhancedImage(user.uid, enhancedImageUrl, fileName)
@@ -129,11 +268,15 @@ export default function EnhancePage() {
     }
   }
 
+  // Update the handleReset function to clear file size
   const handleReset = () => {
     setFile(null)
     setPreviewUrl(null)
     setEnhancedUrl(null)
     setError(null)
+    setFileSize(null)
+    setOriginalFileSize(null)
+    setCompressedFileSize(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
@@ -166,8 +309,7 @@ export default function EnhancePage() {
           <CardHeader>
             <CardTitle>Upload Photo</CardTitle>
             <CardDescription>
-              Faça upload de uma foto para aprimorar com iluminação profissional, enquadramento e efeito bokeh
-              semelhante a uma lente Canon 50mm f/1.2.
+              Envie suas fotos para que nossa IA Avançada torne elas em fotografias profissionais para seu negócio.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -180,12 +322,22 @@ export default function EnhancePage() {
               {previewUrl ? (
                 <div className="relative w-full aspect-square">
                   <ClientImage src={previewUrl} alt="Preview" className="object-contain w-full h-full" />
+                  {fileSize && (
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      {fileSize}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <>
                   <Upload className="h-10 w-10 text-muted-foreground mb-4" />
                   <p className="text-sm text-muted-foreground text-center">
                     Drag and drop your photo here, or click to select a file
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Tamanho máximo: 15MB. Formatos: JPG, PNG
+                    <br />
+                    As imagens serão comprimidas automaticamente para melhor desempenho
                   </p>
                 </>
               )}

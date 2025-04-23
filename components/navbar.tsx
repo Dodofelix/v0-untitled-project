@@ -41,14 +41,14 @@ export default function Navbar() {
           </Link>
 
           <nav className="hidden md:flex gap-6">
+            <Link href="/enhance" className="text-sm font-medium transition-colors hover:text-primary">
+              Enhance Photos
+            </Link>
             <Link href="/#features" className="text-sm font-medium transition-colors hover:text-primary">
               Features
             </Link>
             <Link href="/#pricing" className="text-sm font-medium transition-colors hover:text-primary">
               Pricing
-            </Link>
-            <Link href="/blog" className="text-sm font-medium transition-colors hover:text-primary">
-              Blog
             </Link>
           </nav>
         </div>
@@ -83,14 +83,14 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden border-t">
           <div className="container py-4 flex flex-col gap-4">
+            <Link href="/enhance" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
+              Enhance Photos
+            </Link>
             <Link href="/#features" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
               Features
             </Link>
             <Link href="/#pricing" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
               Pricing
-            </Link>
-            <Link href="/blog" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
-              Blog
             </Link>
 
             <div className="border-t pt-4 mt-2 flex flex-col gap-2">

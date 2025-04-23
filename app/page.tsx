@@ -27,8 +27,8 @@ export default function Home() {
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                   <Button asChild size="lg" className="font-medium">
-                    <Link href="/register">
-                      Get Started
+                    <Link href="/enhance">
+                      Try It Now
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -104,11 +104,11 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold">Ready to Transform Your Photos?</h2>
             <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-              Join thousands of users who are already enhancing their photos with our AI technology.
+              Try our AI photo enhancement now - no account required to start!
             </p>
             <Button asChild size="lg" className="mt-10 bg-white text-purple-600 hover:bg-white/90">
-              <Link href="/register">
-                Get Started Now
+              <Link href="/enhance">
+                Try It Now
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

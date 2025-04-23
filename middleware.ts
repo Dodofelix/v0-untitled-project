@@ -13,17 +13,29 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Protected routes are only accessible when the user is logged in
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/enhance") || pathname.startsWith("/account")) {
+  // Páginas que requerem autenticação
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/account") || pathname.startsWith("/checkout")) {
     if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url))
+      // Salvar a URL atual para redirecionamento após o login
+      const url = new URL("/login", request.url)
+      url.searchParams.set("redirect", pathname + request.nextUrl.search)
+      return NextResponse.redirect(url)
     }
     return NextResponse.next()
   }
 
+  // A página de enhance agora é acessível sem autenticação
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/login", "/register", "/reset-password", "/dashboard/:path*", "/enhance/:path*", "/account/:path*"],
+  matcher: [
+    "/login",
+    "/register",
+    "/reset-password",
+    "/dashboard/:path*",
+    "/enhance/:path*",
+    "/account/:path*",
+    "/checkout/:path*",
+  ],
 }

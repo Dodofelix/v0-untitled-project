@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,8 +20,21 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [redirectPath, setRedirectPath] = useState<string | null>(null)
   const { signIn, googleSignIn, firebaseInitialized } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Verificar se há um parâmetro de redirecionamento
+    if (searchParams) {
+      const redirect = searchParams.get("redirect")
+      if (redirect) {
+        setRedirectPath(redirect)
+      }
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +47,13 @@ export default function LoginPage() {
         title: "Login successful",
         description: "Welcome back to PhotoEnhance AI!",
       })
+
+      // Redirecionar para a página solicitada ou para o dashboard
+      if (redirectPath) {
+        router.push(redirectPath)
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err: any) {
       console.error("Login error:", err)
 
@@ -63,6 +84,13 @@ export default function LoginPage() {
         title: "Login successful",
         description: "Welcome back to PhotoEnhance AI!",
       })
+
+      // Redirecionar para a página solicitada ou para o dashboard
+      if (redirectPath) {
+        router.push(redirectPath)
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err: any) {
       console.error("Google Sign In Error:", err)
 
@@ -91,7 +119,8 @@ export default function LoginPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
           <CardDescription className="text-center">
-            Enter your email and password to login to your account
+            Entre com sua conta para continuar
+            {redirectPath && " e finalizar sua compra"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -192,7 +221,10 @@ export default function LoginPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline">
+            <Link
+              href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : "/register"}
+              className="text-primary hover:underline"
+            >
               Sign up
             </Link>
           </p>

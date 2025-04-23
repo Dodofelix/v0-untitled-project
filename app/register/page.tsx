@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,8 +22,21 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [redirectPath, setRedirectPath] = useState<string | null>(null)
   const { signUp, googleSignIn, firebaseInitialized } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Verificar se há um parâmetro de redirecionamento
+    if (searchParams) {
+      const redirect = searchParams.get("redirect")
+      if (redirect) {
+        setRedirectPath(redirect)
+      }
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +57,13 @@ export default function RegisterPage() {
         title: "Registration successful",
         description: "Welcome to PhotoEnhance AI!",
       })
+
+      // Redirecionar para a página solicitada ou para o dashboard
+      if (redirectPath) {
+        router.push(redirectPath)
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err: any) {
       console.error("Registration error:", err)
 
@@ -73,6 +94,13 @@ export default function RegisterPage() {
         title: "Registration successful",
         description: "Welcome to PhotoEnhance AI!",
       })
+
+      // Redirecionar para a página solicitada ou para o dashboard
+      if (redirectPath) {
+        router.push(redirectPath)
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err: any) {
       console.error("Google Sign In Error:", err)
 
@@ -101,7 +129,8 @@ export default function RegisterPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
           <CardDescription className="text-center">
-            Enter your email and password to create your account
+            Crie sua conta para continuar
+            {redirectPath && " e finalizar sua compra"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -207,7 +236,10 @@ export default function RegisterPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link
+              href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"}
+              className="text-primary hover:underline"
+            >
               Sign in
             </Link>
           </p>
