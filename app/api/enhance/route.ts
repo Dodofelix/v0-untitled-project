@@ -21,7 +21,7 @@ if (process.env.OPENAI_API_KEY) {
   }
 }
 
-// Function to enhance image using OpenAI
+// Função simplificada para aprimorar imagem usando DALL-E 3 diretamente
 async function enhanceImageWithOpenAI(imageUrl: string): Promise<string> {
   // Verify if the client is initialized
   if (!openai) {
@@ -32,10 +32,10 @@ async function enhanceImageWithOpenAI(imageUrl: string): Promise<string> {
   try {
     console.log("Preparing OpenAI API request...")
 
-    // If the image is a base64 string, ensure it's properly formatted
+    // Verificar se a imagem é uma URL ou base64
     if (imageUrl.startsWith("data:")) {
       console.log("Processing base64 image")
-      // Make sure the base64 string is valid
+      // Garantir que a string base64 é válida
       if (!imageUrl.includes(";base64,")) {
         throw new Error("Invalid base64 image format")
       }
@@ -43,36 +43,56 @@ async function enhanceImageWithOpenAI(imageUrl: string): Promise<string> {
       console.log("Processing URL image")
     }
 
-    console.log("Sending request to OpenAI API...")
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+    // Primeiro, usar o modelo Vision para analisar a imagem
+    console.log("Analyzing image with Vision model...")
+    const visionResponse = await openai.chat.completions.create({
+      model: "gpt-4-vision-preview",
       messages: [
-        {
-          role: "system",
-          content:
-            "Você é um especialista em aprimoramento de fotos com foco em fotografia publicitária de alta qualidade.",
-        },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: "Melhore a iluminação, o enquadramento e os detalhes, simulando uma sessão fotográfica feita para uma campanha publicitária de alto padrão. O ângulo deve valorizar o produto/pessoa, com profundidade de campo realista, contraste equilibrado e cores vivas, mantendo o foco nítido e o fundo suavemente desfocado (efeito bokeh), como em uma lente Canon 50mm f/1.2. Melhore a padronização dos ingredientes dispostos.",
+              text: "Descreva esta imagem em detalhes, focando nos elementos principais, cores, composição e iluminação. Seja conciso e objetivo.",
             },
-            { type: "image_url", image_url: { url: imageUrl } },
+            {
+              type: "image_url",
+              image_url: { url: imageUrl },
+            },
           ],
         },
       ],
       max_tokens: 300,
-      timeout: 60000, // 60 second timeout
     })
 
-    console.log("OpenAI API response received")
+    const imageDescription = visionResponse.choices[0]?.message?.content || "uma imagem"
+    console.log("Image description:", imageDescription)
 
-    // Extract the enhanced image URL from the response
-    const enhancedImageUrl = response.choices[0]?.message?.content
+    // Agora, usar DALL-E 3 para gerar uma versão aprimorada
+    console.log("Calling DALL-E 3 API...")
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `Recrie esta imagem exatamente como descrita: ${imageDescription}. 
+      
+Aprimore-a para uma qualidade profissional de fotografia publicitária. 
+Melhore a iluminação, o enquadramento e os detalhes, simulando uma sessão fotográfica feita para uma campanha publicitária de alto padrão. 
+O ângulo deve valorizar o produto/pessoa, com profundidade de campo realista, contraste equilibrado e cores vivas, 
+mantendo o foco nítido e o fundo suavemente desfocado (efeito bokeh), como em uma lente Canon 50mm f/1.2.
+
+IMPORTANTE: Mantenha EXATAMENTE os mesmos elementos, pessoas, objetos e composição da imagem original. 
+Não adicione, remova ou altere significativamente nenhum elemento. Apenas melhore a qualidade fotográfica.`,
+      n: 1,
+      size: "1024x1024",
+      quality: "hd",
+      style: "natural",
+    })
+
+    console.log("DALL-E API response received")
+
+    // Extrair a URL da imagem aprimorada da resposta
+    const enhancedImageUrl = response.data[0]?.url
     if (!enhancedImageUrl) {
-      console.error("No content in OpenAI response")
+      console.error("No image URL in DALL-E response")
       return mockEnhanceImage(imageUrl)
     }
 
@@ -80,7 +100,7 @@ async function enhanceImageWithOpenAI(imageUrl: string): Promise<string> {
     return enhancedImageUrl
   } catch (error) {
     console.error("Error in OpenAI API call:", error)
-    // Fall back to mock enhance on error
+    // Usar o mock em caso de erro
     return mockEnhanceImage(imageUrl)
   }
 }
