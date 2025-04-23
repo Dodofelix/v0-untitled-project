@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const { signIn, googleSignIn, firebaseInitialized } = useAuth()
   const { toast } = useToast()
 
@@ -54,7 +55,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     setError(null)
-    setIsLoading(true)
+    setIsGoogleLoading(true)
 
     try {
       await googleSignIn()
@@ -66,17 +67,21 @@ export default function LoginPage() {
       console.error("Google Sign In Error:", err)
 
       // Mensagens de erro mais amigáveis
-      if (err.message.includes("auth-domain-config-required")) {
-        setError("Firebase authentication domain is not configured. Please contact support.")
+      if (err.message.includes("auth-domain-config-required") || err.message.includes("Authentication domain")) {
+        setError("Firebase authentication domain is not configured correctly. Please contact support.")
       } else if (err.message.includes("invalid-api-key")) {
         setError("Firebase API key is invalid. Please contact support.")
+      } else if (err.message.includes("redirect_uri_mismatch")) {
+        setError("Authentication domain mismatch. Please ensure you're accessing the site from an authorized domain.")
       } else if (err.code === "auth/popup-closed-by-user") {
         setError("Login popup was closed. Please try again.")
+      } else if (err.code === "auth/popup-blocked") {
+        setError("Login popup was blocked by your browser. Please allow popups for this site and try again.")
       } else {
         setError(err.message || "Failed to sign in with Google")
       }
     } finally {
-      setIsLoading(false)
+      setIsGoogleLoading(false)
     }
   }
 
@@ -155,24 +160,33 @@ export default function LoginPage() {
             type="button"
             className="w-full"
             onClick={handleGoogleSignIn}
-            disabled={isLoading || !firebaseInitialized}
+            disabled={isGoogleLoading || !firebaseInitialized}
           >
-            <svg
-              className="mr-2 h-4 w-4"
-              aria-hidden="true"
-              focusable="false"
-              data-prefix="fab"
-              data-icon="google"
-              role="img"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 488 512"
-            >
-              <path
-                fill="currentColor"
-                d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
-              ></path>
-            </svg>
-            Google
+            {isGoogleLoading ? (
+              <>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                Signing in...
+              </>
+            ) : (
+              <>
+                <svg
+                  className="mr-2 h-4 w-4"
+                  aria-hidden="true"
+                  focusable="false"
+                  data-prefix="fab"
+                  data-icon="google"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 488 512"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+                  ></path>
+                </svg>
+                Google
+              </>
+            )}
           </Button>
         </CardContent>
         <CardFooter className="flex justify-center">

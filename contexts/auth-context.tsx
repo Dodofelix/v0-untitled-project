@@ -124,20 +124,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const provider = new GoogleAuthProvider()
-      provider.addScope("email")
 
+      // Adicionar escopos necessários
+      provider.addScope("email")
+      provider.addScope("profile")
+
+      // Definir parâmetros personalizados para garantir que o URI de redirecionamento seja correto
+      provider.setCustomParameters({
+        // Forçar seleção de conta para evitar seleção automática
+        prompt: "select_account",
+        // Usar o domínio de autenticação do Firebase
+        login_hint: auth.tenantId || undefined,
+      })
+
+      // Usar browserPopupRedirectResolver para garantir compatibilidade entre navegadores
       const result = await signInWithPopup(auth, provider, browserPopupRedirectResolver)
 
       if (result.user) {
+        // Criar ou atualizar o documento do usuário no Firestore
+        try {
+          const { createUser } = await import("@/lib/firestore")
+          await createUser(result.user.uid, {
+            email: result.user.email || "",
+            name: result.user.displayName || "",
+            photoUrl: result.user.photoURL || "",
+          })
+        } catch (firestoreError) {
+          console.error("Error creating user document:", firestoreError)
+          // Não interromper o fluxo de autenticação se o Firestore falhar
+        }
+
         router.push("/dashboard")
       }
     } catch (error: any) {
       console.error("Google sign in error:", error)
 
+      // Mensagens de erro mais específicas
       if (error.code === "auth/invalid-api-key") {
         throw new Error("Firebase API key is invalid. Please check your configuration.")
       } else if (error.code === "auth/auth-domain-config-required") {
-        throw new Error("Authentication domain not configured. Please contact support.")
+        throw new Error("Authentication domain not configured correctly. Please check Firebase console settings.")
+      } else if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Authentication popup was closed. Please try again.")
+      } else if (error.code === "auth/popup-blocked") {
+        throw new Error("Authentication popup was blocked by the browser. Please allow popups for this site.")
+      } else if (error.code === "auth/cancelled-popup-request") {
+        throw new Error("Authentication request was cancelled. Please try again.")
+      } else if (error.code === "auth/redirect-cancelled-by-user") {
+        throw new Error("Authentication redirect was cancelled. Please try again.")
+      } else if (error.message && error.message.includes("redirect_uri_mismatch")) {
+        throw new Error(
+          "Authentication domain mismatch. Please ensure your Firebase authentication domain is correctly configured.",
+        )
       } else {
         throw error
       }

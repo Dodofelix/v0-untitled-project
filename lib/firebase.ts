@@ -17,25 +17,59 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID || "1:123456789012:web:abcdef1234567890",
 }
 
-// Verificar se as configurações estão completas
+// Verificar se as configurações estão completas e válidas
 const isConfigValid =
   firebaseConfig.apiKey &&
   firebaseConfig.apiKey !== "undefined" &&
   firebaseConfig.authDomain &&
-  firebaseConfig.projectId
+  firebaseConfig.authDomain !== "undefined" &&
+  firebaseConfig.projectId &&
+  firebaseConfig.projectId !== "undefined"
+
+// Verificar especificamente o authDomain, que é crucial para o erro redirect_uri_mismatch
+const hasValidAuthDomain =
+  firebaseConfig.authDomain &&
+  firebaseConfig.authDomain !== "undefined" &&
+  firebaseConfig.authDomain.includes(".firebaseapp.com")
 
 // Inicializar Firebase apenas se a configuração for válida
 let app, auth, db, storage
 
 try {
   if (isConfigValid) {
+    // Registrar a configuração para depuração (remover em produção)
+    if (process.env.NODE_ENV === "development") {
+      console.log("Firebase config:", {
+        apiKey: firebaseConfig.apiKey ? "Configurado" : "Não configurado",
+        authDomain: firebaseConfig.authDomain,
+        projectId: firebaseConfig.projectId,
+        hasValidAuthDomain: hasValidAuthDomain,
+      })
+    }
+
     // Initialize Firebase
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
     auth = getAuth(app)
     db = getFirestore(app)
     storage = getStorage(app)
+
+    // Verificar se o auth foi inicializado corretamente
+    if (!auth) {
+      throw new Error("Firebase auth could not be initialized")
+    }
   } else {
     console.error("Firebase configuration is invalid. Check your environment variables.")
+
+    // Registrar detalhes específicos sobre o que está faltando
+    if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "undefined") {
+      console.error("Firebase API key is missing or invalid")
+    }
+    if (!firebaseConfig.authDomain || firebaseConfig.authDomain === "undefined") {
+      console.error("Firebase Auth Domain is missing or invalid")
+    }
+    if (!hasValidAuthDomain) {
+      console.error("Firebase Auth Domain does not appear to be a valid Firebase domain")
+    }
 
     // Criar objetos mock para evitar erros
     if (isClient) {
