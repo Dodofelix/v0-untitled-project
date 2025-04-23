@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -72,7 +73,43 @@ export default function SubscriptionPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [loading, setLoading] = useState(true)
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [isParamsReady, setIsParamsReady] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const router = useRouter()
   const { toast } = useToast()
+
+  // Verificar parâmetros de URL de forma segura
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Verificar se searchParams está disponível
+    if (searchParams) {
+      setIsParamsReady(true)
+
+      // Verificar parâmetros de sucesso/erro
+      const success = searchParams.get("success")
+      const canceled = searchParams.get("canceled")
+
+      if (success === "true") {
+        setSuccessMessage("Payment successful! Your subscription has been activated.")
+        toast({
+          title: "Payment Successful",
+          description: "Your subscription has been activated successfully.",
+          variant: "default",
+        })
+      }
+
+      if (canceled === "true") {
+        setErrorMessage("Payment was canceled. Your subscription has not been activated.")
+        toast({
+          title: "Payment Canceled",
+          description: "Your subscription has not been activated.",
+          variant: "destructive",
+        })
+      }
+    }
+  }, [searchParams, toast])
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -99,8 +136,12 @@ export default function SubscriptionPage() {
     try {
       const session = await getStripeSession(priceId, user.uid)
 
-      // Redirect to Stripe Checkout
-      window.location.href = session.url as string
+      // Verificar se a sessão e a URL existem antes de redirecionar
+      if (session && session.url) {
+        window.location.href = session.url
+      } else {
+        throw new Error("Failed to create checkout session")
+      }
     } catch (error) {
       console.error("Error creating checkout session:", error)
       toast({
@@ -127,6 +168,22 @@ export default function SubscriptionPage() {
         <h1 className="text-3xl font-bold tracking-tight">Subscription</h1>
         <p className="text-muted-foreground">Manage your subscription and credits.</p>
       </div>
+
+      {successMessage && (
+        <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+          <CardContent className="pt-6">
+            <p className="text-green-800 dark:text-green-400">{successMessage}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {errorMessage && (
+        <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+          <CardContent className="pt-6">
+            <p className="text-red-800 dark:text-red-400">{errorMessage}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {subscription && (
         <Card>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useEffect, useState, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -37,26 +37,50 @@ const pricingPlans = {
 }
 
 export default function CheckoutPage() {
-  const searchParams = useSearchParams()
+  // Inicializar estados
+  const [searchParamsReady, setSearchParamsReady] = useState(false)
+  const [plan, setPlan] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Hooks
   const router = useRouter()
   const { user } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [plan, setPlan] = useState<string | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
   const { toast } = useToast()
 
+  // Usar um ref para armazenar searchParams para evitar problemas de renderização
+  const searchParamsRef = useRef<URLSearchParams | null>(null)
+
+  // Obter searchParams de forma segura
   useEffect(() => {
-    // Garantir que searchParams está disponível
-    if (searchParams) {
-      const planParam = searchParams.get("plan")
+    try {
+      // Verificar se estamos no cliente
+      if (typeof window !== "undefined") {
+        // Obter parâmetros da URL atual
+        const urlParams = new URLSearchParams(window.location.search)
+        searchParamsRef.current = urlParams
+        setSearchParamsReady(true)
+      }
+    } catch (error) {
+      console.error("Error accessing search params:", error)
+    }
+  }, [])
+
+  // Processar parâmetros quando estiverem prontos
+  useEffect(() => {
+    if (searchParamsReady && searchParamsRef.current) {
+      const planParam = searchParamsRef.current.get("plan")
+
       if (planParam && Object.keys(pricingPlans).includes(planParam)) {
         setPlan(planParam)
       } else {
+        // Redirecionar se o plano não for válido
         router.push("/dashboard/subscription")
       }
+
       setIsInitialized(true)
     }
-  }, [searchParams, router])
+  }, [searchParamsReady, router])
 
   const handleCheckout = async () => {
     if (!user || !plan) return
@@ -66,7 +90,7 @@ export default function CheckoutPage() {
     try {
       const session = await getStripeSession(plan, user.uid)
 
-      // Redirect to Stripe Checkout
+      // Verificar se a sessão e a URL existem antes de redirecionar
       if (session && session.url) {
         window.location.href = session.url
       } else {
