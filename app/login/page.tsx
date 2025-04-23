@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Info } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn, googleSignIn } = useAuth()
+  const { signIn, googleSignIn, firebaseInitialized } = useAuth()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +33,20 @@ export default function LoginPage() {
         description: "Welcome back to PhotoEnhance AI!",
       })
     } catch (err: any) {
-      setError(err.message || "Failed to sign in")
+      console.error("Login error:", err)
+
+      // Mensagens de erro mais amigáveis
+      if (err.code === "auth/invalid-email") {
+        setError("Invalid email address. Please check and try again.")
+      } else if (err.code === "auth/user-not-found") {
+        setError("No account found with this email. Please check or create a new account.")
+      } else if (err.code === "auth/wrong-password") {
+        setError("Incorrect password. Please try again or reset your password.")
+      } else if (err.code === "auth/invalid-api-key") {
+        setError("Authentication configuration error. Please contact support.")
+      } else {
+        setError(err.message || "Failed to sign in")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -50,13 +63,15 @@ export default function LoginPage() {
         description: "Welcome back to PhotoEnhance AI!",
       })
     } catch (err: any) {
-      console.error("Google Sign In Error in component:", err)
+      console.error("Google Sign In Error:", err)
 
-      // Mensagem de erro mais amigável
+      // Mensagens de erro mais amigáveis
       if (err.message.includes("auth-domain-config-required")) {
-        setError(
-          "Firebase authentication domain is not configured. Please contact support or try another login method.",
-        )
+        setError("Firebase authentication domain is not configured. Please contact support.")
+      } else if (err.message.includes("invalid-api-key")) {
+        setError("Firebase API key is invalid. Please contact support.")
+      } else if (err.code === "auth/popup-closed-by-user") {
+        setError("Login popup was closed. Please try again.")
       } else {
         setError(err.message || "Failed to sign in with Google")
       }
@@ -75,6 +90,18 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {!firebaseInitialized && (
+            <Alert
+              variant="warning"
+              className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
+            >
+              <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+              <AlertDescription className="text-yellow-600 dark:text-yellow-400">
+                Firebase authentication is not initialized. Some features may not work properly.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -109,7 +136,7 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || !firebaseInitialized}>
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
@@ -123,7 +150,13 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+          <Button
+            variant="outline"
+            type="button"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading || !firebaseInitialized}
+          >
             <svg
               className="mr-2 h-4 w-4"
               aria-hidden="true"
