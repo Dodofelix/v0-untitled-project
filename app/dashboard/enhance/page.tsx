@@ -18,6 +18,7 @@ import {
 } from "@/lib/firestore"
 import { enhanceImage } from "@/lib/openai"
 import type { Subscription } from "@/models/user"
+import ClientImage from "@/components/client-image"
 
 export default function EnhancePage() {
   const { user } = useAuth()
@@ -177,14 +178,7 @@ export default function EnhancePage() {
             >
               {previewUrl ? (
                 <div className="relative w-full aspect-square">
-                  <img
-                    src={previewUrl || "/placeholder.svg"}
-                    alt="Preview"
-                    className="object-contain w-full h-full"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg?height=400&width=400"
-                    }}
-                  />
+                  <ClientImage src={previewUrl} alt="Preview" className="object-contain w-full h-full" />
                 </div>
               ) : (
                 <>
@@ -234,14 +228,7 @@ export default function EnhancePage() {
                 </div>
               ) : enhancedUrl ? (
                 <div className="relative w-full aspect-square">
-                  <img
-                    src={enhancedUrl || "/placeholder.svg"}
-                    alt="Enhanced photo"
-                    className="object-contain w-full h-full"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg?height=400&width=400"
-                    }}
-                  />
+                  <ClientImage src={enhancedUrl} alt="Enhanced photo" className="object-contain w-full h-full" />
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
