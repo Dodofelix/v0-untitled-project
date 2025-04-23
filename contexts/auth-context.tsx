@@ -31,15 +31,23 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [initialized, setInitialized] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      setLoading(false)
-    })
+    try {
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser)
+        setLoading(false)
+        setInitialized(true)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (error) {
+      console.error("Error in auth state change:", error)
+      setLoading(false)
+      setInitialized(true)
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {
@@ -85,6 +93,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       throw error
     }
+  }
+
+  // Renderizar um estado de carregamento até que a autenticação seja inicializada
+  if (!initialized) {
+    return <div className="min-h-screen flex items-center justify-center">Initializing...</div>
   }
 
   return (

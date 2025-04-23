@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 interface ImageComparisonSliderProps {
   beforeImage: string
@@ -19,8 +19,9 @@ export default function ImageComparisonSlider({
 }: ImageComparisonSliderProps) {
   const [position, setPosition] = useState(50)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent | MouseEvent) => {
     if (!containerRef.current) return
 
     const rect = containerRef.current.getBoundingClientRect()
@@ -29,16 +30,77 @@ export default function ImageComparisonSlider({
     setPosition(percentage)
   }
 
-  const handleMouseLeave = () => {
-    setPosition(50)
+  const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
+    if (!containerRef.current || !e.touches[0]) return
+
+    const rect = containerRef.current.getBoundingClientRect()
+    const x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
+    const percentage = (x / rect.width) * 100
+    setPosition(percentage)
   }
+
+  const handleMouseDown = () => {
+    setIsDragging(true)
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseLeave = () => {
+    if (!isDragging) {
+      setPosition(50)
+    }
+    setIsDragging(false)
+  }
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        handleMouseMove(e)
+      }
+    }
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false)
+    }
+
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (isDragging) {
+        handleTouchMove(e)
+      }
+    }
+
+    const handleGlobalTouchEnd = () => {
+      setIsDragging(false)
+    }
+
+    // Adicionar event listeners globais
+    window.addEventListener("mousemove", handleGlobalMouseMove)
+    window.addEventListener("mouseup", handleGlobalMouseUp)
+    window.addEventListener("touchmove", handleGlobalTouchMove)
+    window.addEventListener("touchend", handleGlobalTouchEnd)
+
+    // Limpar event listeners
+    return () => {
+      window.removeEventListener("mousemove", handleGlobalMouseMove)
+      window.removeEventListener("mouseup", handleGlobalMouseUp)
+      window.removeEventListener("touchmove", handleGlobalTouchMove)
+      window.removeEventListener("touchend", handleGlobalTouchEnd)
+    }
+  }, [isDragging])
 
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full overflow-hidden rounded-lg cursor-pointer"
       onMouseMove={handleMouseMove}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onTouchMove={handleTouchMove}
+      onTouchStart={handleMouseDown}
+      onTouchEnd={handleMouseUp}
     >
       {/* Before Image (Base layer) */}
       <div className="absolute inset-0 w-full h-full">

@@ -42,14 +42,19 @@ export default function CheckoutPage() {
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [plan, setPlan] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
-    const planParam = searchParams.get("plan")
-    if (planParam && Object.keys(pricingPlans).includes(planParam)) {
-      setPlan(planParam)
-    } else {
-      router.push("/dashboard/subscription")
+    // Garantir que searchParams está disponível
+    if (searchParams) {
+      const planParam = searchParams.get("plan")
+      if (planParam && Object.keys(pricingPlans).includes(planParam)) {
+        setPlan(planParam)
+      } else {
+        router.push("/dashboard/subscription")
+      }
+      setIsInitialized(true)
     }
   }, [searchParams, router])
 
@@ -62,7 +67,11 @@ export default function CheckoutPage() {
       const session = await getStripeSession(plan, user.uid)
 
       // Redirect to Stripe Checkout
-      window.location.href = session.url as string
+      if (session && session.url) {
+        window.location.href = session.url
+      } else {
+        throw new Error("Failed to create checkout session")
+      }
     } catch (error) {
       console.error("Error creating checkout session:", error)
       toast({
@@ -72,6 +81,15 @@ export default function CheckoutPage() {
       })
       setLoading(false)
     }
+  }
+
+  // Mostrar um estado de carregamento enquanto os parâmetros não estão disponíveis
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   if (!plan || !pricingPlans[plan as keyof typeof pricingPlans]) {
