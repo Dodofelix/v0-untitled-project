@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useRef, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,8 +14,6 @@ import { uploadImage, saveEnhancedImage } from "@/lib/storage"
 import { createPhotoEnhancement, updatePhotoEnhancement } from "@/lib/firestore"
 import ClientImage from "@/components/client-image"
 import EnhanceImageComparison from "@/components/enhance-image-comparison"
-import { useTempStorage } from "@/hooks/use-temp-storage"
-// First, import the compression utility
 import { compressImage, formatFileSize } from "@/lib/image-utils"
 
 // Maximum file size in bytes (15MB)
@@ -32,15 +30,13 @@ export default function PublicEnhancePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const { toast } = useToast()
-  const { storeImage, getStoredImages, clearStorage } = useTempStorage()
-  const searchParams = useSearchParams()
 
-  // Add a file size state
+  // Add file size states
   const [fileSize, setFileSize] = useState<string | null>(null)
   const [originalFileSize, setOriginalFileSize] = useState<string | null>(null)
   const [compressedFileSize, setCompressedFileSize] = useState<string | null>(null)
 
-  // Store the full base64 images in memory instead of localStorage
+  // Store the full base64 images in memory
   const [currentSessionImages, setCurrentSessionImages] = useState<{
     originalFull: string | null
     enhancedFull: string | null
@@ -48,34 +44,6 @@ export default function PublicEnhancePage() {
     originalFull: null,
     enhancedFull: null,
   })
-
-  useEffect(() => {
-    // Check for success parameter in URL
-    if (searchParams && searchParams.get("success") === "true") {
-      toast({
-        title: "Imagem aprimorada com sucesso!",
-        description: "Sua foto foi aprimorada e está pronta para visualização.",
-      })
-    }
-
-    // Load stored image thumbnails
-    const loadStoredImages = async () => {
-      const images = await getStoredImages()
-      if (images.length > 0) {
-        const lastImage = images[images.length - 1]
-
-        // Use thumbnails for display if available
-        setPreviewUrl(lastImage.originalThumbnail || lastImage.originalUrl)
-        setEnhancedUrl(lastImage.enhancedThumbnail || lastImage.enhancedUrl)
-
-        if (lastImage.originalThumbnail || lastImage.enhancedThumbnail) {
-          setIsReady(true)
-        }
-      }
-    }
-
-    loadStoredImages()
-  }, [searchParams, toast, getStoredImages])
 
   const validateFile = (file: File): boolean => {
     // Check file size
@@ -93,100 +61,115 @@ export default function PublicEnhancePage() {
     return true
   }
 
-  // Update the handleFileChange function to compress images
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
-    if (selectedFile) {
-      // Store original file size
-      setOriginalFileSize(formatFileSize(selectedFile.size))
+    if (!selectedFile) return
 
-      if (!validateFile(selectedFile)) {
-        return
+    // Clear previous states
+    setError(null)
+    setEnhancedUrl(null)
+
+    // Store original file size
+    setOriginalFileSize(formatFileSize(selectedFile.size))
+
+    if (!validateFile(selectedFile)) {
+      return
+    }
+
+    try {
+      // Show loading state while compressing
+      setIsProcessing(true)
+
+      // Compress the image (max 5MB, 70% quality)
+      const compressed = await compressImage(selectedFile, 5, 0.7)
+
+      // Update file size information
+      setCompressedFileSize(formatFileSize(compressed.size))
+      setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(selectedFile.size)})`)
+
+      // Create object URL for preview
+      const objectUrl = URL.createObjectURL(compressed)
+      setPreviewUrl(objectUrl)
+      setFile(compressed)
+
+      // Convert to base64 for API processing
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setCurrentSessionImages((prev) => ({
+          ...prev,
+          originalFull: reader.result as string,
+        }))
       }
-
-      try {
-        // Show loading state while compressing
-        setIsProcessing(true)
-
-        // Compress the image (max 5MB, 70% quality)
-        const compressed = await compressImage(selectedFile, 5, 0.7)
-
-        // Update file size information
-        setCompressedFileSize(formatFileSize(compressed.size))
-        setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(selectedFile.size)})`)
-
-        // Reset previous state
-        setFile(compressed)
-        setPreviewUrl(URL.createObjectURL(compressed))
-        setEnhancedUrl(null)
-        setError(null)
-        setCurrentSessionImages({
-          originalFull: null,
-          enhancedFull: null,
-        })
-      } catch (error) {
-        console.error("Error compressing image:", error)
-        // Fall back to original file if compression fails
-        setFile(selectedFile)
-        setPreviewUrl(URL.createObjectURL(selectedFile))
-        setFileSize(formatFileSize(selectedFile.size))
-      } finally {
-        setIsProcessing(false)
-      }
+      reader.readAsDataURL(compressed)
+    } catch (error) {
+      console.error("Error processing image:", error)
+      // Fall back to original file if compression fails
+      setFile(selectedFile)
+      setPreviewUrl(URL.createObjectURL(selectedFile))
+      setFileSize(formatFileSize(selectedFile.size))
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  // Update the handleDrop function to compress images
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     const droppedFile = e.dataTransfer.files?.[0]
-    if (droppedFile) {
-      // Store original file size
-      setOriginalFileSize(formatFileSize(droppedFile.size))
+    if (!droppedFile) return
 
-      if (!validateFile(droppedFile)) {
-        return
+    // Clear previous states
+    setError(null)
+    setEnhancedUrl(null)
+
+    // Store original file size
+    setOriginalFileSize(formatFileSize(droppedFile.size))
+
+    if (!validateFile(droppedFile)) {
+      return
+    }
+
+    try {
+      // Show loading state while compressing
+      setIsProcessing(true)
+
+      // Compress the image (max 5MB, 70% quality)
+      const compressed = await compressImage(droppedFile, 5, 0.7)
+
+      // Update file size information
+      setCompressedFileSize(formatFileSize(compressed.size))
+      setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(droppedFile.size)})`)
+
+      // Create object URL for preview
+      const objectUrl = URL.createObjectURL(compressed)
+      setPreviewUrl(objectUrl)
+      setFile(compressed)
+
+      // Convert to base64 for API processing
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setCurrentSessionImages((prev) => ({
+          ...prev,
+          originalFull: reader.result as string,
+        }))
       }
-
-      try {
-        // Show loading state while compressing
-        setIsProcessing(true)
-
-        // Compress the image (max 5MB, 70% quality)
-        const compressed = await compressImage(droppedFile, 5, 0.7)
-
-        // Update file size information
-        setCompressedFileSize(formatFileSize(compressed.size))
-        setFileSize(`${formatFileSize(compressed.size)} (compressed from ${formatFileSize(droppedFile.size)})`)
-
-        // Reset previous state
-        setFile(compressed)
-        setPreviewUrl(URL.createObjectURL(compressed))
-        setEnhancedUrl(null)
-        setError(null)
-        setCurrentSessionImages({
-          originalFull: null,
-          enhancedFull: null,
-        })
-      } catch (error) {
-        console.error("Error compressing image:", error)
-        // Fall back to original file if compression fails
-        setFile(droppedFile)
-        setPreviewUrl(URL.createObjectURL(droppedFile))
-        setFileSize(formatFileSize(droppedFile.size))
-      } finally {
-        setIsProcessing(false)
-      }
+      reader.readAsDataURL(compressed)
+    } catch (error) {
+      console.error("Error processing image:", error)
+      // Fall back to original file if compression fails
+      setFile(droppedFile)
+      setPreviewUrl(URL.createObjectURL(droppedFile))
+      setFileSize(formatFileSize(droppedFile.size))
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
-  }
+  }, [])
 
-  // Update the callEnhanceAPI function for better error handling
-  const callEnhanceAPI = async (imageUrl: string) => {
-    console.log("Calling enhance API with image URL...")
+  const callEnhanceAPI = async (imageUrl: string): Promise<string> => {
+    console.log("Calling enhance API...")
 
     // Add timeout to prevent hanging requests
     const controller = new AbortController()
@@ -204,19 +187,11 @@ export default function PublicEnhancePage() {
 
       clearTimeout(timeoutId)
 
-      // Get the response text first for debugging
-      const responseText = await response.text()
-      console.log("API response received, length:", responseText.length)
-
-      // Try to parse the response as JSON
-      let data
-      try {
-        data = JSON.parse(responseText)
-        console.log("API response parsed successfully")
-      } catch (jsonError) {
-        console.error("Error parsing JSON response:", jsonError)
-        throw new Error("Invalid response from server: " + responseText.substring(0, 100))
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`)
       }
+
+      const data = await response.json()
 
       // Check if we have an error but also a fallback URL
       if (data.error && data.fallback && data.enhancedImageUrl) {
@@ -231,28 +206,34 @@ export default function PublicEnhancePage() {
 
       // Check if we have the enhanced image URL
       if (!data.enhancedImageUrl) {
-        console.error("No enhanced image URL in response:", data)
         throw new Error(data.error || "No enhanced image URL returned")
       }
 
       return data.enhancedImageUrl
     } catch (error) {
       console.error("Error in callEnhanceAPI:", error)
-      // Return the original image as fallback in case of error
-      console.log("Returning original image as fallback")
-      return imageUrl
+      throw error
     }
   }
 
   const handleEnhance = async () => {
-    if (!file) return
+    if (!file && !currentSessionImages.originalFull) {
+      toast({
+        title: "No image selected",
+        description: "Please upload an image first",
+        variant: "destructive",
+      })
+      return
+    }
 
     setIsProcessing(true)
     setError(null)
 
     try {
-      // If user is authenticated, use the normal flow
+      // If user is authenticated, use the normal flow with Firebase
       if (user) {
+        if (!file) throw new Error("No file available")
+
         // Upload original image to Firebase Storage
         const { downloadUrl: originalUrl, fileName } = await uploadImage(user.uid, file)
 
@@ -277,184 +258,63 @@ export default function PublicEnhancePage() {
 
         // Update UI
         setEnhancedUrl(storedEnhancedUrl)
+        setIsReady(true)
       } else {
-        // For unauthenticated users, use a temporary flow
-        // Convert the image to base64 for temporary storage
-        const reader = new FileReader()
+        // For unauthenticated users, use base64 and in-memory storage
+        const imageToProcess = currentSessionImages.originalFull || previewUrl
 
-        reader.onloadend = async () => {
-          try {
-            const originalBase64 = reader.result as string
-            console.log("Original image converted to base64")
+        if (!imageToProcess) {
+          throw new Error("No image data available")
+        }
 
-            // Store the full image in memory (not localStorage)
+        // Call the API to enhance the image
+        const enhancedImageUrl = await callEnhanceAPI(imageToProcess)
+
+        // If the response is a URL, fetch the image and convert to base64
+        if (enhancedImageUrl.startsWith("http")) {
+          const response = await fetch(enhancedImageUrl)
+          const blob = await response.blob()
+
+          const reader = new FileReader()
+          reader.onloadend = () => {
+            const enhancedBase64 = reader.result as string
             setCurrentSessionImages((prev) => ({
               ...prev,
-              originalFull: originalBase64,
+              enhancedFull: enhancedBase64,
             }))
-
-            // Call the API to enhance the image
-            console.log("Calling enhance API...")
-            const enhancedImageUrl = await callEnhanceAPI(originalBase64)
-            console.log("Enhanced image URL received")
-
-            // If the response is a URL, we need to fetch the image
-            if (enhancedImageUrl.startsWith("http")) {
-              console.log("Fetching enhanced image from URL...")
-              try {
-                const response = await fetch(enhancedImageUrl)
-                const blob = await response.blob()
-                const enhancedReader = new FileReader()
-
-                enhancedReader.onloadend = () => {
-                  const enhancedBase64 = enhancedReader.result as string
-                  console.log("Enhanced image converted to base64")
-
-                  // Store the full enhanced image in memory
-                  setCurrentSessionImages((prev) => ({
-                    ...prev,
-                    enhancedFull: enhancedBase64,
-                  }))
-
-                  // Store only thumbnails in localStorage
-                  storeImage({
-                    originalUrl: null,
-                    enhancedUrl: null,
-                    timestamp: Date.now(),
-                    // The thumbnails will be created in the storeImage function
-                    originalThumbnail: originalBase64,
-                    enhancedThumbnail: enhancedBase64,
-                  })
-
-                  // Update UI with the full images from memory
-                  setEnhancedUrl(enhancedBase64)
-                  setIsReady(true)
-
-                  toast({
-                    title: "Foto aprimorada com sucesso!",
-                    description: "Sua foto foi aprimorada e está pronta para visualização.",
-                  })
-                }
-
-                enhancedReader.readAsDataURL(blob)
-              } catch (fetchError) {
-                console.error("Error fetching enhanced image:", fetchError)
-                // Use original as fallback
-                setCurrentSessionImages((prev) => ({
-                  ...prev,
-                  enhancedFull: originalBase64,
-                }))
-
-                // Store only thumbnails in localStorage
-                storeImage({
-                  originalUrl: null,
-                  enhancedUrl: null,
-                  timestamp: Date.now(),
-                  originalThumbnail: originalBase64,
-                  enhancedThumbnail: originalBase64,
-                })
-
-                setEnhancedUrl(originalBase64)
-                setIsReady(true)
-
-                toast({
-                  title: "Aprimoramento limitado",
-                  description: "Não foi possível aprimorar completamente a imagem, mas você pode continuar.",
-                  variant: "warning",
-                })
-              }
-            } else {
-              // If the response is already base64, we can use it directly
-              console.log("Enhanced image is already base64")
-              setCurrentSessionImages((prev) => ({
-                ...prev,
-                enhancedFull: enhancedImageUrl,
-              }))
-
-              // Store only thumbnails in localStorage
-              storeImage({
-                originalUrl: null,
-                enhancedUrl: null,
-                timestamp: Date.now(),
-                originalThumbnail: originalBase64,
-                enhancedThumbnail: enhancedImageUrl,
-              })
-
-              // Update UI with the full image from memory
-              setEnhancedUrl(enhancedImageUrl)
-              setIsReady(true)
-
-              toast({
-                title: "Foto aprimorada com sucesso!",
-                description: "Sua foto foi aprimorada e está pronta para visualização.",
-              })
-            }
-          } catch (error) {
-            console.error("Error processing image:", error)
-            setError("Falha ao processar a imagem. Por favor, tente novamente.")
-
-            // Use original as fallback if we have it
-            if (reader.result) {
-              const originalBase64 = reader.result as string
-              setCurrentSessionImages({
-                originalFull: originalBase64,
-                enhancedFull: originalBase64,
-              })
-
-              try {
-                // Store only thumbnails in localStorage
-                storeImage({
-                  originalUrl: null,
-                  enhancedUrl: null,
-                  timestamp: Date.now(),
-                  originalThumbnail: originalBase64,
-                  enhancedThumbnail: originalBase64,
-                })
-              } catch (storageError) {
-                console.error("Failed to store thumbnails:", storageError)
-                // Continue even if storage fails
-              }
-
-              setEnhancedUrl(originalBase64)
-              setIsReady(true)
-
-              toast({
-                title: "Usando imagem original",
-                description: "Não foi possível aprimorar a imagem, mas você pode continuar com a original.",
-                variant: "warning",
-              })
-            }
+            setEnhancedUrl(enhancedBase64)
+            setIsReady(true)
           }
+          reader.readAsDataURL(blob)
+        } else {
+          // If already base64, use directly
+          setCurrentSessionImages((prev) => ({
+            ...prev,
+            enhancedFull: enhancedImageUrl,
+          }))
+          setEnhancedUrl(enhancedImageUrl)
+          setIsReady(true)
         }
-
-        reader.onerror = () => {
-          console.error("Error reading file:", reader.error)
-          setError("Erro ao ler o arquivo. Por favor, tente novamente.")
-        }
-
-        reader.readAsDataURL(file)
       }
+
+      toast({
+        title: "Foto aprimorada com sucesso!",
+        description: "Sua foto foi aprimorada e está pronta para visualização.",
+      })
     } catch (error: any) {
       console.error("Error enhancing image:", error)
       setError(error.message || "Falha ao aprimorar a imagem. Por favor, tente novamente.")
 
-      // If we have a preview URL, use it as fallback
-      if (previewUrl) {
-        setEnhancedUrl(previewUrl)
-        setIsReady(true)
-
-        toast({
-          title: "Usando imagem original",
-          description: "Não foi possível aprimorar a imagem, mas você pode continuar com a original.",
-          variant: "warning",
-        })
-      }
+      toast({
+        title: "Erro ao aprimorar imagem",
+        description: error.message || "Ocorreu um erro ao processar sua imagem",
+        variant: "destructive",
+      })
     } finally {
       setIsProcessing(false)
     }
   }
 
-  // Update the handleReset function to clear file size
   const handleReset = () => {
     setFile(null)
     setPreviewUrl(null)

@@ -43,6 +43,10 @@ export const enhanceImage = async (imageUrl: string): Promise<string> => {
     // If the image is a base64 string, ensure it's properly formatted
     if (imageUrl.startsWith("data:")) {
       console.log("Processing base64 image")
+      // Make sure the base64 string is valid
+      if (!imageUrl.includes(";base64,")) {
+        throw new Error("Invalid base64 image format")
+      }
     } else {
       console.log("Processing URL image")
     }
