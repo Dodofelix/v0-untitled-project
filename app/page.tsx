@@ -42,8 +42,6 @@ export default function Home() {
                   <ImageComparisonSlider
                     beforeImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1EFAE062-2B00-4FB0-AAC5-6D9FA2E00F38.PNG-cSovq5mlhLSYm5jIkh9HQlYYQUYv0w.jpeg"
                     afterImage="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/38437EF2-5BC6-4AB5-AF9B-889A8350BC0D.PNG-qVeJ6axYTPRxWd1lARiX1oUdDzpuMz.png"
-                    beforeAlt="Before enhancement"
-                    afterAlt="After enhancement"
                   />
                 </div>
                 <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">

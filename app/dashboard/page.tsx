@@ -129,6 +129,9 @@ export default function DashboardPage() {
                         src={enhancement.enhancedUrl || "/placeholder.svg"}
                         alt="Enhanced photo"
                         className="object-cover w-full h-full rounded-t-lg"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg"
+                        }}
                       />
                     )}
                   </div>

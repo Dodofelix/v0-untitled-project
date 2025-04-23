@@ -72,6 +72,15 @@ export default function ImageComparisonSlider({
     }
   }, [])
 
+  // Verificar se as URLs das imagens são válidas
+  if (!beforeImage || !afterImage) {
+    return (
+      <div className="relative w-full h-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+        <p className="text-sm text-gray-500 dark:text-gray-400">Imagens não disponíveis</p>
+      </div>
+    )
+  }
+
   return (
     <div
       ref={containerRef}
@@ -83,7 +92,14 @@ export default function ImageComparisonSlider({
     >
       {/* Before Image (Base layer) */}
       <div className="absolute inset-0 w-full h-full">
-        <img src={beforeImage || "/placeholder.svg"} alt={beforeAlt} className="w-full h-full object-cover" />
+        <img
+          src={beforeImage || "/placeholder.svg"}
+          alt={beforeAlt}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder.svg"
+          }}
+        />
         <div className="absolute bottom-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded z-20">Before</div>
       </div>
 
@@ -94,6 +110,9 @@ export default function ImageComparisonSlider({
           alt={afterAlt}
           className="absolute top-0 left-0 w-full h-full object-cover"
           style={{ width: `${100 / (sliderPosition / 100)}%`, maxWidth: "none" }}
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder.svg"
+          }}
         />
         <div className="absolute bottom-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded z-20">After</div>
       </div>

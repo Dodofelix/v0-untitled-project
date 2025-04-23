@@ -178,7 +178,14 @@ export default function EnhancePage() {
             >
               {previewUrl ? (
                 <div className="relative w-full aspect-square">
-                  <img src={previewUrl || "/placeholder.svg"} alt="Preview" className="object-contain w-full h-full" />
+                  <img
+                    src={previewUrl || "/placeholder.svg"}
+                    alt="Preview"
+                    className="object-contain w-full h-full"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg"
+                    }}
+                  />
                 </div>
               ) : (
                 <>
