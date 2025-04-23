@@ -42,13 +42,13 @@ export default function Navbar() {
 
           <nav className="hidden md:flex gap-6">
             <Link href="/enhance" className="text-sm font-medium transition-colors hover:text-primary">
-              Enhance Photos
+              Aprimorar Fotos
             </Link>
             <Link href="/#features" className="text-sm font-medium transition-colors hover:text-primary">
-              Features
+              Recursos
             </Link>
             <Link href="/#pricing" className="text-sm font-medium transition-colors hover:text-primary">
-              Pricing
+              Preços
             </Link>
           </nav>
         </div>
@@ -59,15 +59,15 @@ export default function Navbar() {
           <div className="hidden md:flex gap-4">
             {user ? (
               <Button asChild variant="default">
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/dashboard">Painel</Link>
               </Button>
             ) : (
               <>
                 <Button asChild variant="ghost">
-                  <Link href="/login">Login</Link>
+                  <Link href="/login">Entrar</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/register">Sign Up</Link>
+                  <Link href="/register">Cadastrar</Link>
                 </Button>
               </>
             )}
@@ -84,32 +84,32 @@ export default function Navbar() {
         <div className="md:hidden border-t">
           <div className="container py-4 flex flex-col gap-4">
             <Link href="/enhance" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
-              Enhance Photos
+              Aprimorar Fotos
             </Link>
             <Link href="/#features" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
-              Features
+              Recursos
             </Link>
             <Link href="/#pricing" className="px-4 py-2 text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
-              Pricing
+              Preços
             </Link>
 
             <div className="border-t pt-4 mt-2 flex flex-col gap-2">
               {user ? (
                 <Button asChild className="w-full">
                   <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    Dashboard
+                    Painel
                   </Link>
                 </Button>
               ) : (
                 <>
                   <Button asChild variant="outline" className="w-full">
                     <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                      Login
+                      Entrar
                     </Link>
                   </Button>
                   <Button asChild className="w-full">
                     <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                      Sign Up
+                      Cadastrar
                     </Link>
                   </Button>
                 </>

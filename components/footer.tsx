@@ -10,20 +10,20 @@ export default function Footer() {
               PhotoEnhance AI
             </Link>
             <p className="mt-4 text-sm text-muted-foreground max-w-md">
-              Transform your photos with AI technology. Upload low-quality photos and get professional-looking results
-              instantly.
+              Transforme suas fotos com tecnologia de IA. Envie fotos de baixa qualidade e obtenha resultados
+              profissionais instantaneamente.
             </p>
           </div>
 
           <div>
-            <h3 className="font-medium text-sm mb-4">Product</h3>
+            <h3 className="font-medium text-sm mb-4">Produto</h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/#features"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Features
+                  Recursos
                 </Link>
               </li>
               <li>
@@ -31,7 +31,7 @@ export default function Footer() {
                   href="/#pricing"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Pricing
+                  Preços
                 </Link>
               </li>
               <li>
@@ -43,21 +43,21 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-medium text-sm mb-4">Company</h3>
+            <h3 className="font-medium text-sm mb-4">Empresa</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  About
+                  Sobre
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy
+                  Privacidade
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Terms
+                  Termos
                 </Link>
               </li>
             </ul>
@@ -66,7 +66,7 @@ export default function Footer() {
 
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} PhotoEnhance AI. All rights reserved.
+            &copy; {new Date().getFullYear()} PhotoEnhance AI. Todos os direitos reservados.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

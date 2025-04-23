@@ -368,19 +368,19 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  Transform Your Photos with AI
+                  Transforme Suas Fotos com IA
                 </h1>
                 <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
-                  Upload low-quality photos and get professional-looking results instantly. Our AI enhances lighting,
-                  color, sharpness, and removes imperfections.
+                  Envie fotos de baixa qualidade e obtenha resultados profissionais instantaneamente. Nossa IA melhora a
+                  iluminação, cor, nitidez e remove imperfeições.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row gap-4">
                   <Button size="lg" className="font-medium" onClick={scrollToEnhancement}>
-                    Try It Now
+                    Experimente Agora
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                   <Button variant="outline" size="lg" className="font-medium" asChild>
-                    <Link href="#pricing">View Pricing</Link>
+                    <Link href="#pricing">Ver Preços</Link>
                   </Button>
                 </div>
               </div>
@@ -400,9 +400,9 @@ export default function Home() {
         <section ref={enhancementSectionRef} className="py-20 bg-white dark:bg-gray-950">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Enhance Your Photo Now</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Aprimore Sua Foto Agora</h2>
               <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Upload your photo and let our AI transform it into a professional-quality image in seconds
+                Envie sua foto e deixe nossa IA transformá-la em uma imagem de qualidade profissional em segundos
               </p>
             </div>
 
@@ -416,8 +416,8 @@ export default function Home() {
             <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
               <Card>
                 <CardHeader>
-                  <CardTitle>Upload Your Photo</CardTitle>
-                  <CardDescription>Drag and drop or select a photo to enhance</CardDescription>
+                  <CardTitle>Envie Sua Foto</CardTitle>
+                  <CardDescription>Arraste e solte ou selecione uma foto para aprimorar</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div
@@ -476,8 +476,8 @@ export default function Home() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Enhanced Result</CardTitle>
-                  <CardDescription>Your enhanced photo will appear here</CardDescription>
+                  <CardTitle>Resultado Aprimorado</CardTitle>
+                  <CardDescription>Sua foto aprimorada aparecerá aqui</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center min-h-[300px]">
@@ -612,9 +612,9 @@ export default function Home() {
         <section className="py-20 bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Powerful Features</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Recursos Poderosos</h2>
               <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Our AI-powered platform offers everything you need to transform your photos
+                Nossa plataforma com IA oferece tudo que você precisa para transformar suas fotos
               </p>
             </div>
 
@@ -623,10 +623,10 @@ export default function Home() {
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-6">
                   <ImageIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">AI Enhancement</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Aprimoramento com IA</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Our advanced AI algorithms analyze and enhance your photos, improving lighting, color balance, and
-                  sharpness.
+                  Nossos algoritmos avançados de IA analisam e aprimoram suas fotos, melhorando iluminação, equilíbrio
+                  de cores e nitidez.
                 </p>
               </div>
 
@@ -634,9 +634,10 @@ export default function Home() {
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-6">
                   <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Instant Results</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Resultados Instantâneos</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Get professional-quality enhancements in seconds. No waiting, no complicated editing tools.
+                  Obtenha aprimoramentos de qualidade profissional em segundos. Sem espera, sem ferramentas de edição
+                  complicadas.
                 </p>
               </div>
 
@@ -644,9 +645,10 @@ export default function Home() {
                 <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Secure Storage</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Armazenamento Seguro</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Your photos are securely stored and processed. We prioritize your privacy and data security.
+                  Suas fotos são armazenadas e processadas com segurança. Priorizamos sua privacidade e a segurança dos
+                  dados.
                 </p>
               </div>
             </div>
@@ -661,16 +663,16 @@ export default function Home() {
         {/* CTA Section */}
         <section className="py-20 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold">Ready to Transform Your Photos?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Pronto para Transformar Suas Fotos?</h2>
             <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-              Try our AI photo enhancement now - no account required to start!
+              Experimente nosso aprimoramento de fotos com IA agora - não é necessário criar uma conta para começar!
             </p>
             <Button
               size="lg"
               className="mt-10 bg-white text-purple-600 hover:bg-white/90"
               onClick={scrollToEnhancement}
             >
-              Try It Now
+              Experimente Agora
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

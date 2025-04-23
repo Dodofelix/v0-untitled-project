@@ -8,23 +8,28 @@ import { Check } from "lucide-react"
 
 const pricingPlans = [
   {
-    name: "Basic",
-    price: "R$ 47.90",
-    description: "Perfect for beginners",
-    features: ["5 enhanced photos", "High-quality results", "Secure cloud storage", "Download in full resolution"],
+    name: "Básico",
+    price: "R$ 47,90",
+    description: "Perfeito para iniciantes",
+    features: [
+      "5 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+    ],
     priceId: "price_basic",
     credits: 5,
   },
   {
-    name: "Standard",
-    price: "R$ 77.90",
-    description: "Most popular choice",
+    name: "Padrão",
+    price: "R$ 77,90",
+    description: "Escolha mais popular",
     features: [
-      "10 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
+      "10 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
     ],
     priceId: "price_standard",
     credits: 10,
@@ -32,31 +37,31 @@ const pricingPlans = [
   },
   {
     name: "Premium",
-    price: "R$ 111.70",
-    description: "For photo enthusiasts",
+    price: "R$ 111,70",
+    description: "Para entusiastas de fotografia",
     features: [
-      "15 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
-      "Advanced enhancement options",
+      "15 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
+      "Opções avançadas de aprimoramento",
     ],
     priceId: "price_premium",
     credits: 15,
   },
   {
     name: "Pro",
-    price: "R$ 137.90",
-    description: "For professionals",
+    price: "R$ 137,90",
+    description: "Para profissionais",
     features: [
-      "20 enhanced photos",
-      "High-quality results",
-      "Secure cloud storage",
-      "Download in full resolution",
-      "Priority processing",
-      "Advanced enhancement options",
-      "Email support",
+      "20 fotos aprimoradas",
+      "Resultados de alta qualidade",
+      "Armazenamento seguro na nuvem",
+      "Download em resolução completa",
+      "Processamento prioritário",
+      "Opções avançadas de aprimoramento",
+      "Suporte por email",
     ],
     priceId: "price_pro",
     credits: 20,
@@ -70,9 +75,9 @@ export default function PricingSection() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Simple, Transparent Pricing</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Preços Simples e Transparentes</h2>
         <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Choose the plan that works best for you
+          Escolha o plano que funciona melhor para você
         </p>
       </div>
 
@@ -85,7 +90,7 @@ export default function PricingSection() {
             }`}
           >
             {plan.popular && (
-              <div className="bg-purple-500 text-white text-xs font-medium px-3 py-1 text-center">MOST POPULAR</div>
+              <div className="bg-purple-500 text-white text-xs font-medium px-3 py-1 text-center">MAIS POPULAR</div>
             )}
 
             <div className="p-6">
@@ -107,9 +112,9 @@ export default function PricingSection() {
 
               <Button className="mt-8 w-full" asChild>
                 {user ? (
-                  <Link href={`/checkout?plan=${plan.priceId}`}>Get Started</Link>
+                  <Link href={`/checkout?plan=${plan.priceId}`}>Começar Agora</Link>
                 ) : (
-                  <Link href="/register">Sign Up</Link>
+                  <Link href="/register">Cadastre-se</Link>
                 )}
               </Button>
             </div>
